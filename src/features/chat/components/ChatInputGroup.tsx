@@ -67,7 +67,7 @@ export function ChatInputGroup({
           size="icon-xs"
           onClick={onSubmit}
         >
-          <ArrowUpIcon color="black" />
+          <ArrowUpIcon />
           <span className="sr-only">Send</span>
         </InputGroupButton>
       </InputGroupAddon>
