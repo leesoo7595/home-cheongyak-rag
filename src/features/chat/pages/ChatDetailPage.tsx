@@ -1,20 +1,20 @@
 import { ChatInputGroup } from "../components/ChatInputGroup"
+import { ChatMessages } from "../components/ChatMessages"
 import { useLocalMessagesQuery } from "../hooks/queries/useLocalMessagesQuery"
 import { useChatInput } from "../hooks/useChatInput"
+import { NewChatPage } from "./NewChatPage"
 
 export function ChatDetailPage() {
 
-  const { data: messages } = useLocalMessagesQuery()
+  const { data = [] } = useLocalMessagesQuery()
   const {value, setValue, handleSubmit} = useChatInput()
   
+  if (data.length === 0) {
+    return <NewChatPage />
+  }
+
   return <div>
-    <div>
-      {messages?.map((msg, index) => (
-        <div key={index}>
-          <strong>{msg.role}:</strong> {msg.content}
-        </div>
-      ))}
-    </div>
+    <ChatMessages messages={data} />
 
     <ChatInputGroup
       value={value}
