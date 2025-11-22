@@ -1,12 +1,22 @@
-export const baseURL = 'http://localhost:5175/api'
+export function createHttpClient(baseURL: string) {
+  return async function http<T>(path: string, config: RequestInit = {}): Promise<T> {
+    const url = baseURL + path
+    const response = await fetch(url, config)
 
-async function http<T>(path: string, config: RequestInit): Promise<T> {
-    const request = new Request(baseURL + path, config)
-    const response = await fetch(request)
-    if (!response.ok) {
-        throw new Error(response.statusText)
-    }
+    if (!response.ok)            // modern style
+      throw new Error(await response.text())
+
     return response.json()
+  }
 }
 
-export { http }
+export interface ApiResponse<T> {
+  status: {
+    code: number
+    message: string
+  }
+  result: T
+}
+
+export const api = createHttpClient('http://localhost:5175/api')
+export const serverApi = createHttpClient('http://localhost:4000')

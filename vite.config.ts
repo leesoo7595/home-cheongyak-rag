@@ -13,6 +13,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      "/_localdb": "http://localhost:4000",
       "/api": {
         target: "https://clovastudio.stream.ntruss.com",
         changeOrigin: true,
