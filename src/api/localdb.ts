@@ -2,7 +2,7 @@ import { serverApi } from "./base"
 import type { Message } from "./chat-completions"
 
 export const fetchChatCompletions = async () => {
-  return await serverApi(`/_localdb/chat_completions`, {
+  return await serverApi<Message[]>(`/_localdb/chat_completions`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

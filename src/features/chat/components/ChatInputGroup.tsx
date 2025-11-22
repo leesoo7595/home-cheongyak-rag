@@ -19,22 +19,15 @@ type ChatInputGroupProps = {
   value: string
   onChange: (value: string) => void
   onSubmit: () => void
-  isSubmitting?: boolean
 }
 
 export function ChatInputGroup({
   value,
   onChange,
   onSubmit,
-  isSubmitting,
 }: ChatInputGroupProps) {
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
-  }
-
-  const handleSubmitClick = () => {
-    if (!value.trim() || isSubmitting) return
-    onSubmit()
   }
 
   return (
@@ -52,7 +45,6 @@ export function ChatInputGroup({
         >
           <PlusIcon />
         </InputGroupButton>
-
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <InputGroupButton variant="ghost">Auto</InputGroupButton>
@@ -67,16 +59,14 @@ export function ChatInputGroup({
             <DropdownMenuItem>Manual</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
         <InputGroupText className="ml-auto">52% used</InputGroupText>
         <Separator orientation="vertical" className="!h-4" />
-
         <InputGroupButton
           variant="default"
           className="rounded-full"
           size="icon-xs"
-          onClick={handleSubmitClick}
-          disabled={!value.trim() || isSubmitting}
+          // 🔥 여기서는 그냥 onSubmit만 호출
+          onClick={onSubmit}
         >
           <ArrowUpIcon color="black" />
           <span className="sr-only">Send</span>
