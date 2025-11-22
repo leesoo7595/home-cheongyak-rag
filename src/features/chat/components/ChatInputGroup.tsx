@@ -65,7 +65,6 @@ export function ChatInputGroup({
           variant="default"
           className="rounded-full"
           size="icon-xs"
-          // 🔥 여기서는 그냥 onSubmit만 호출
           onClick={onSubmit}
         >
           <ArrowUpIcon color="black" />

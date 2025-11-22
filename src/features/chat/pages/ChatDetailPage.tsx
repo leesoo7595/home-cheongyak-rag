@@ -13,13 +13,16 @@ export function ChatDetailPage() {
     return <NewChatPage />
   }
 
-  return <div>
-    <ChatMessages messages={data} />
-
-    <ChatInputGroup
-      value={value}
-      onChange={setValue}
-      onSubmit={handleSubmit}
-    />
+  return <div className="relative">
+    <div className="h-full overflow-y-auto pb-24">
+      <ChatMessages messages={data} />
+    </div>
+    <div className="fixed bottom-0 inset-x-0 bg-background p-4 pt-0">
+      <ChatInputGroup
+        value={value}
+        onChange={setValue}
+        onSubmit={handleSubmit}
+      />
+    </div>
   </div>
 }
