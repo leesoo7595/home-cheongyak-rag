@@ -1,5 +1,6 @@
 import type { Message } from '@/api/chat-completions'
 import { cn } from '../../../lib/utils'
+import { MarkdownRenderer } from '@/components/common/MarkdownRenderer'
 
 type ChatMessageItemProps = {
   message: Message
@@ -19,16 +20,18 @@ export function ChatMessageItem({ message }: ChatMessageItemProps) {
         isUser ? 'justify-end' : 'justify-start'
       )}
     >
-      <div
-        className={cn(
-          'max-w-[75%] rounded-xl px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed',
-          isUser
-            ? 'bg-primary text-primary-foreground'
-            : 'bg-muted text-foreground border border-border'
-        )}
-      >
-        {message.content}
-      </div>
+      {isUser ? 
+        <div
+          className={
+          'max-w rounded-xl px-4 py-3 text-sm whitespace-pre-wrap leading-relaxed bg-primary text-primary-foreground'
+          }
+        >
+          {message.content}
+        </div> 
+        : <div className="max-w text-sm leading-relaxed text-left">
+          <MarkdownRenderer content={message.content} />
+        </div>
+      }
     </div>
   )
 }
