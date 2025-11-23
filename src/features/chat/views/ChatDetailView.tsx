@@ -9,12 +9,12 @@ type ChatDetailViewProps = {
 
 export function ChatDetailView({ chatInput }: ChatDetailViewProps) {
   const { data = [] } = useLocalMessagesQuery()
-  const { value, setValue, handleSubmit } = chatInput
+  const { streamText, value, setValue, handleSubmit } = chatInput
 
   return (
     <div className="relative flex h-full flex-col">
       <div className="flex-1 overflow-y-auto pb-28">
-        <ChatMessages messages={data}/>
+        <ChatMessages messages={data} streamText={streamText} />
       </div>
 
       <div

@@ -1,8 +1,8 @@
-import { serverApi } from "./base"
-import type { Message } from "./chat-completions"
+import { serverApi } from "../lib/http"
+import type { ChatCompletionsRequestMessage } from "./chat-completions.types"
 
 export const fetchChatCompletions = async () => {
-  return await serverApi<Message[]>(`/_localdb/chat_completions`, {
+  return await serverApi<ChatCompletionsRequestMessage[]>(`/_localdb/chat_completions`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -11,7 +11,7 @@ export const fetchChatCompletions = async () => {
   
 }
 
-export const saveLocalMessage = async (body: Message) => {
+export const saveLocalMessage = async (body: ChatCompletionsRequestMessage) => {
   return await serverApi(`/_localdb/`, {
     body: JSON.stringify(body),
     method: 'POST',

@@ -1,40 +1,32 @@
-import { api, type ApiResponse } from "@/api/base"
+import { api } from "@/lib/http"
+import type { 
+  ChatCompletionsRequestBody, 
+  StreamingChatCompletionsErrorEvent, 
+  StreamingChatCompletionsResultEvent, 
+  StreamingChatCompletionsTokenEvent 
+} from "./chat-completions.types"
 
-export interface ChatCompletions {
-  messages: Message[]
-}
+export const streamChatCompletions = async (params: {
+  body: ChatCompletionsRequestBody,
+  onToken?: (tokenEvent: StreamingChatCompletionsTokenEvent) => void,
+  onResult?: (resultEvent: StreamingChatCompletionsResultEvent) => void,
+  onError?: (errorEvent: StreamingChatCompletionsErrorEvent) => void,
+}) => {
+  const { body, onToken, onResult, onError } = params
 
-export type FinishReason = "stop" | "length";
-
-export interface ChatCompletionsUsage {
-  promptTokens: number
-  completionTokens: number
-  totalTokens: number
-  completionTokensDetails: {
-      thinkingTokens: number
-  }
-}
-
-export interface ChatCompletionsResponse {
-  message: Message  
-  finishReason: FinishReason
-  created: number
-  seed: number
-  usage: ChatCompletionsUsage
-}
-
-export interface Message {
-  role: string
-  content: string
-}
-
-export const sendChatCompletions = async (body: ChatCompletions) => {
-  return await api<ApiResponse<ChatCompletionsResponse>>(`/v3/chat-completions/HCX-007`, {
+  return await api.stream<
+    StreamingChatCompletionsTokenEvent,
+    StreamingChatCompletionsResultEvent,
+    StreamingChatCompletionsErrorEvent
+  >(`/v3/chat-completions/HCX-007`, {
     body: JSON.stringify(body),
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${import.meta.env.VITE_TOKEN}`,
       'Content-Type': 'application/json',
     },
+    onToken,
+    onResult,
+    onError,
   })
 }

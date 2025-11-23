@@ -1,9 +1,9 @@
-import type { Message } from '@/api/chat-completions'
-import { cn } from '../../../lib/utils'
 import { MarkdownRenderer } from '@/components/common/MarkdownRenderer'
+import { cn } from '../../../lib/utils'
+import type { ChatMessage } from '../types'
 
 type ChatMessageItemProps = {
-  message: Message
+  message: ChatMessage
 }
 
 export function ChatMessageItem({ message }: ChatMessageItemProps) {
