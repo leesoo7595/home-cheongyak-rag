@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useSendChatCompletionsMutation } from './mutations/useSendChatCompletionsMutation'
 import { useSaveLocalMessageMutation } from './mutations/useSaveLocalMessage'
 
+export type ChatInputController = ReturnType<typeof useChatInput>
+
 export function useChatInput(): {
   value: string
   setValue: (value: string) => void
