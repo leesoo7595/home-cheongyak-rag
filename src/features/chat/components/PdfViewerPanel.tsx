@@ -1,20 +1,29 @@
 interface PdfViewerPanelProps {
-  file: File | null
+  src: string | null
+  fileName?: string | null
 }
 
-export function PdfViewerPanel({ file }: PdfViewerPanelProps) {
-  if (!file) {
-    return (
-      <div className="flex h-64 items-center justify-center text-sm text-muted-foreground border rounded-md">
-        PDF 파일을 업로드하면 여기에 미리보기가 표시됩니다.
-      </div>
-    )
-  }
-
+export function PdfViewerPanel({ src, fileName }: PdfViewerPanelProps) {
   return (
-    <div>
-      {/* 나중에 실제 PDF 내용을 넣을 자리 */}
-      <p className="mb-2 text-sm text-muted-foreground">{file.name}</p>
+    <div className="flex h-full w-full flex-col gap-2">
+      {fileName && (
+        <div className="mb-2 text-sm text-muted-foreground">{fileName}</div>
+      )}
+
+      {/* 여기부터가 실제 PDF "페이지" 영역 */}
+      <div className="flex flex-1 justify-center overflow-auto">
+        {/* 한 장짜리 페이지 카드 느낌 컨테이너 */}
+        <div className="my-4 w-full max-w-[720px]">
+          {/* A4 비율(대략 1 : 1.414) 유지용 래퍼 */}
+          <div className="relative w-full pt-[141.4%] rounded-md border bg-background shadow-sm">
+            <iframe
+              src={src ?? undefined}
+              title={fileName ?? 'PDF preview'}
+              className="absolute inset-0 h-full w-full rounded-md"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
