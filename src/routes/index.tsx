@@ -1,5 +1,5 @@
 import { NewChatView } from '@/features/chat/views/NewChatView'
-import { PdfEmptyUpload } from '@/features/chat/views/PdfUploadView'
+import { PdfEmptyUploadPanel } from '@/features/chat/components/PdfUploadPanel'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/')({
 function App() {
   return (
     <>
-      <PdfEmptyUpload />
+      <PdfEmptyUploadPanel />
       <NewChatView />
     </>
   )
