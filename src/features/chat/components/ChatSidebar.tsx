@@ -1,3 +1,6 @@
+import { Link } from '@tanstack/react-router'
+import { FilePlus } from 'lucide-react'
+
 import {
   Sidebar,
   SidebarContent,
@@ -11,7 +14,6 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useConversationsQuery } from '@/features/chat/hooks/queries/useConversationsQuery'
-import { Link } from '@tanstack/react-router'
 
 export function ChatSidebar() {
   const { data: conversations } = useConversationsQuery()
@@ -20,6 +22,15 @@ export function ChatSidebar() {
       <SidebarHeader />
       <SidebarContent>
         <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild>
+                <Link to={'/'}>
+                  <FilePlus /> <span>새 채팅</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
           <SidebarGroupLabel>내 채팅</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
