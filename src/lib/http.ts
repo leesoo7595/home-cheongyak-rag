@@ -48,7 +48,7 @@ async function fetchStream<TToken, TResult, TError>(
   const reader = response.body.getReader()
   const decoder = new TextDecoder('utf-8')
   let buffer = ''
-  let lastResult: TResult | undefined;
+  let lastResult: TResult | undefined
 
   while (true) {
     const { done, value } = await reader.read()

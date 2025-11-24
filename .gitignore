@@ -25,4 +25,6 @@ dist-ssr
 
 .env
 .venv
-data.jsonl
+
+server/**.jsonl
+server/*/**.jsonl
