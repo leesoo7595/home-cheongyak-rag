@@ -17,29 +17,80 @@ interface PdfEmptyUploadProps {
 
 export function PdfEmptyUpload({ onFileSelected }: PdfEmptyUploadProps) {
   const [fileName, setFileName] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   const handleButtonClick = () => {
     inputRef.current?.click()
   }
 
+  const validatePdf = (file: File | null): File | null => {
+    if (!file) return null
+
+    const isPdf =
+      file.type === 'application/pdf' ||
+      file.name.toLowerCase().endsWith('.pdf')
+
+    if (!isPdf) {
+      setError('PDF 파일만 업로드할 수 있어요.')
+      return null
+    }
+
+    setError(null)
+    return file
+  }
+
+  const handleFile = (file: File | null) => {
+    const validFile = validatePdf(file)
+    if (!validFile) return
+
+    setFileName(validFile.name)
+    onFileSelected?.(validFile)
+  }
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
-    if (!file) return
+    handleFile(file)
+  }
 
-    setFileName(file.name)
-    onFileSelected?.(file)
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsDragging(false)
+
+    const file = e.dataTransfer.files?.[0] ?? null
+    handleFile(file)
   }
 
   return (
-    <Empty className="border border-dashed">
+    <Empty
+      className={`border border-dashed transition-colors ${
+        isDragging ? 'border-primary bg-muted/40' : ''
+      }`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <FileText />
         </EmptyMedia>
         <EmptyTitle>Cloud Storage Empty</EmptyTitle>
         <EmptyDescription>
-          Upload PDF files to your cloud storage to access them anywhere.
+          Drag & drop a single PDF file here, or upload it from your device.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
