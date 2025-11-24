@@ -11,8 +11,9 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
 import { useConversationsQuery } from '@/features/chat/hooks/queries/useConversationsQuery'
+import { Link } from '@tanstack/react-router'
 
-export function AppSidebar() {
+export function ChatSidebar() {
   const { data: conversations } = useConversationsQuery()
   return (
     <Sidebar>
@@ -25,9 +26,9 @@ export function AppSidebar() {
               {conversations?.map((conversation) => (
                 <SidebarMenuItem key={conversation.id}>
                   <SidebarMenuButton asChild>
-                    {/* <a href={conversation.url}> */}
-                    <span>{conversation.title}</span>
-                    {/* </a> */}
+                    <Link to={`/f/${conversation.id}`}>
+                      <span>{conversation.title}</span>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

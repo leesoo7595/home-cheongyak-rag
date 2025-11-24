@@ -1,6 +1,6 @@
 import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { SidebarProvider } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/common/AppSidebar'
+import { ChatSidebar } from '@/features/chat/components/ChatSidebar'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ChatInputProvider } from '@/contexts/ChatInputProvider'
 
@@ -11,7 +11,7 @@ export const Route = createRootRoute({
 function RootLayout() {
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <ChatSidebar />
       <AppLayout>
         <ChatInputProvider>
           <Outlet />
