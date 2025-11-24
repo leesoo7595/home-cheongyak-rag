@@ -11,11 +11,13 @@ import {
   EmptyTitle,
 } from '@/components/ui/empty'
 
-interface PdfEmptyUploadProps {
+interface PdfEmptyUploadPanelProps {
   onFileSelected?: (file: File | null) => void
 }
 
-export function PdfEmptyUpload({ onFileSelected }: PdfEmptyUploadProps) {
+export function PdfEmptyUploadPanel({
+  onFileSelected,
+}: PdfEmptyUploadPanelProps) {
   const [fileName, setFileName] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
