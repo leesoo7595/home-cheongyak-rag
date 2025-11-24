@@ -1,4 +1,4 @@
-import { ChatPage } from '@/features/chat/pages/ChatPage'
+import { NewChatView } from '@/features/chat/views/NewChatView'
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -6,5 +6,5 @@ export const Route = createFileRoute('/')({
 })
 
 function App() {
-  return <ChatPage />
+  return <NewChatView />
 }
