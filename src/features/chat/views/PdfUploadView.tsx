@@ -88,9 +88,9 @@ export function PdfEmptyUpload({ onFileSelected }: PdfEmptyUploadProps) {
         <EmptyMedia variant="icon">
           <FileText />
         </EmptyMedia>
-        <EmptyTitle>Cloud Storage Empty</EmptyTitle>
+        <EmptyTitle>아직 업로드된 청약 공고문이 없어요</EmptyTitle>
         <EmptyDescription>
-          Drag & drop a single PDF file here, or upload it from your device.
+          여기에 PDF 파일을 드래그하거나, 버튼을 눌러 업로드할 수 있어요.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
