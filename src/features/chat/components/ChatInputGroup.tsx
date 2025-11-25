@@ -19,12 +19,14 @@ type ChatInputGroupProps = {
   value: string
   onChange: (value: string) => void
   onSubmit: () => void
+  disabled?: boolean
 }
 
 export function ChatInputGroup({
   value,
   onChange,
   onSubmit,
+  disabled = false,
 }: ChatInputGroupProps) {
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
@@ -36,6 +38,7 @@ export function ChatInputGroup({
         placeholder="Ask, Search or Chat..."
         value={value}
         onChange={handleChange}
+        disabled={disabled}
       />
       <InputGroupAddon align="block-end">
         <InputGroupButton
@@ -66,6 +69,7 @@ export function ChatInputGroup({
           className="rounded-full"
           size="icon-xs"
           onClick={onSubmit}
+          disabled={disabled}
         >
           <ArrowUpIcon />
           <span className="sr-only">Send</span>
