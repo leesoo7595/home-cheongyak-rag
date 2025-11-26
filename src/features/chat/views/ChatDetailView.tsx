@@ -25,26 +25,21 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
   }, [data.length, streamText.length])
 
   return (
-    <div className="relative flex h-full flex-col">
+    <div className="relative h-screen flex flex-col pt-14">
       <div className="flex-1 overflow-y-auto pb-28">
         <ChatMessages messages={data} streamText={streamText} />
         <div ref={bottomRef} className="h-28" />
       </div>
-
       <div
-        className="
-          fixed bottom-0 right-0 
-          left-[var(--sidebar-width,0px)] 
+        className="absolute bottom-0 left-0 w-full
           bg-background
-        "
+          px-6 py-3"
       >
-        <div className="mx-auto w-full max-w-3xl px-6 py-3">
-          <ChatInputGroup
-            value={value}
-            onChange={setValue}
-            onSubmit={handleSubmit}
-          />
-        </div>
+        <ChatInputGroup
+          value={value}
+          onChange={setValue}
+          onSubmit={handleSubmit}
+        />
       </div>
     </div>
   )
