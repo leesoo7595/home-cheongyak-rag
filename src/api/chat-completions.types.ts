@@ -1,5 +1,7 @@
+export type ChatCompletionsRole = 'user' | 'assistant' | 'system'
+
 export interface ChatCompletionsResponseMessage {
-  role: string
+  role: ChatCompletionsRole
   content: string
   thinkingContent: string
 }
