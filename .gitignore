@@ -28,3 +28,4 @@ dist-ssr
 
 server/**.jsonl
 server/*/**.jsonl
+server/notebook_test

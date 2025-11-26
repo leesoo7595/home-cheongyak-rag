@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from conversation_api import router as conversations_router
 from messages_api import router as messages_router
+from post_process_api import router as post_process_router
 
 app = FastAPI()
 app.add_middleware(
@@ -23,3 +24,4 @@ def get_health():
 
 app.include_router(conversations_router, prefix="/_localdb")
 app.include_router(messages_router, prefix="/_localdb")
+app.include_router(post_process_router, prefix="/_localdb")
