@@ -24,10 +24,6 @@ def create_message(msg: MessageIn):
         conversation = convos.get(msg.conversation_id)
         if not conversation:
             raise HTTPException(status_code=404, detail="Conversation not found")
-    else:
-        # 새 대화 시작
-        title = msg.content.strip().split("\n")[0][:30]
-        conversation = create_conversation(title)
 
     conversation_id = conversation["id"]
 

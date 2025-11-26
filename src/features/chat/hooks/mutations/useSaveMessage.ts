@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { saveMessage } from '@/api/localdb'
 import type {
-  Conversation,
   MessageRequest,
   SaveMessageResponse,
 } from '@/api/localdb.types'
@@ -21,20 +20,8 @@ export function useSaveMessageMutation() {
       return saveMessage(message)
     },
     onSuccess: (res) => {
-      const newId = res.conversation.id
-
-      const conversations = queryClient.getQueryData<Conversation[]>([
-        'conversations',
-      ])
-      const exists = conversations?.some((c) => c.id === newId)
-      if (!exists) {
-        queryClient.invalidateQueries({
-          queryKey: ['conversations'],
-        })
-      }
-
       queryClient.invalidateQueries({
-        queryKey: ['messages', newId],
+        queryKey: ['messages', res.conversation.id],
       })
     },
     onError: (error) => {

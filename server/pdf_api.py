@@ -1,3 +1,4 @@
+from storage import create_conversation
 from fastapi import APIRouter, UploadFile, File, HTTPException
 import fitz
 import uuid
@@ -60,7 +61,7 @@ def embed_in_batches(chunks, batch_size=24):
 
     return all_vecs
 
-@router.post("/upload")
+@router.post("/pdf")
 async def upload_pdf(id: str, file: UploadFile = File(...)):
   if file.content_type != "application/pdf":
     raise HTTPException(status_code=400, detail="PDF 파일만 가능합니다.")
@@ -101,7 +102,11 @@ async def upload_pdf(id: str, file: UploadFile = File(...)):
         "embedding": vec
       },
     )
-  
+
+  """PDF 파일 업로드하면서 대화 생성"""
+  title = file.filename
+  create_conversation(title)
+
   # TODO: FE에 chunks와 해당하는 ID 같이 내려줘서 프론트에서 작업이 가능하게해야할듯
   return {
     "pdf_id": pdf_id,
