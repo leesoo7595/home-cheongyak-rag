@@ -9,9 +9,5 @@ export const Route = createFileRoute('/')({
 function App() {
   const { file } = usePdfPanel()
 
-  return (
-    <>
-      <NewChatView disabled={!file} />
-    </>
-  )
+  return <NewChatView disabled={!file} />
 }

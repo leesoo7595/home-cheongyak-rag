@@ -8,7 +8,7 @@ type AppLayoutProps = {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <header>
+      <header className="absolute">
         <div className="w-full px-6 py-4">
           <AppBreadcrumb />
         </div>

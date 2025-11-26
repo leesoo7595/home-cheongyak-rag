@@ -3,8 +3,8 @@ import { SidebarProvider } from '@/components/ui/sidebar'
 import { ChatSidebar } from '@/features/chat/components/ChatSidebar'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ChatInputProvider } from '@/contexts/ChatInputProvider'
-import { PdfPanel } from '@/features/chat/components/PdfPanel'
 import { PdfPanelProvider } from '@/contexts/PdfPanelContext'
+import { PdfPanel } from '@/features/chat/components/PdfPanel'
 
 export const Route = createRootRoute({
   component: RootLayout,
