@@ -27,3 +27,7 @@ class CreateMessageResponse(BaseModel):
   conversation: Conversation
   message: MessageOut
 
+class PdfResponse(BaseModel):
+  pdfId: str = Field(alias="pdf_id")
+  chunks: int
+  message: str
