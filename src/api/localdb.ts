@@ -1,5 +1,11 @@
 import { serverApi } from "../lib/http"
-import type { Conversation, MessageRequest, MessageResponse, SaveMessageResponse } from "./localdb.types"
+import type { 
+  Conversation, 
+  MessageRequest, 
+  MessageResponse, 
+  PdfResponse, 
+  SaveMessageResponse 
+} from "./localdb.types"
 
 export const fetchMessages = async (id: string) => {
   return await serverApi<MessageResponse[]>(`/_localdb/conversations/${id}/messages`, {
@@ -23,4 +29,14 @@ export const saveMessage = async (body: MessageRequest) => {
 
 export const fetchConversations = async () => {
   return await serverApi<Conversation[]>(`/_localdb/conversations`)
+}
+
+export const uploadPdf = async (file: File) => {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  return await serverApi<PdfResponse>('/_localdb/pdf', {
+    body: formData,
+    method: 'POST',
+  })
 }

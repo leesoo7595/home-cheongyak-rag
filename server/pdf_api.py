@@ -1,3 +1,4 @@
+from starlette.responses import FileResponse
 from storage import create_conversation
 from fastapi import APIRouter, UploadFile, File, HTTPException
 import fitz
@@ -8,6 +9,8 @@ from opensearchpy import OpenSearch
 from opensearch_dsl import Search
 
 import os
+
+from models import PdfResponse
 
 router = APIRouter()
 
@@ -29,7 +32,7 @@ client = OpenSearch(
 INDEX_NAME = os.getenv("OPENSEARCH_INDEX")
 bge_model = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
 
-def chunk_text(text: str, chunk_size: int = 2000):
+def chunk_text(text: str, chunk_size: int = 1000):
   words = text.split()
   chunks: list[str] = []
   curr: list[str] = []
@@ -62,7 +65,7 @@ def embed_in_batches(chunks, batch_size=24):
     return all_vecs
 
 @router.post("/pdf")
-async def upload_pdf(id: str, file: UploadFile = File(...)):
+async def upload_pdf(file: UploadFile = File(...)):
   if file.content_type != "application/pdf":
     raise HTTPException(status_code=400, detail="PDF 파일만 가능합니다.")
   
@@ -88,8 +91,26 @@ async def upload_pdf(id: str, file: UploadFile = File(...)):
   # 3) bge-m3 임베딩 (dense only)
   dense_vecs = embed_in_batches(chunks, batch_size=8)
 
+  """PDF 파일 업로드하면서 대화 생성"""
+  title = file.filename
+  conversation = create_conversation(title)
+
+  # 파일 저장
+  UPLOAD_DIR = "pdfs"
+  if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
+  
+  file_path = os.path.join(UPLOAD_DIR, f"{conversation['id']}.pdf")
+  
+  # file pointer reset
+  await file.seek(0)
+  
+  with open(file_path, "wb") as f:
+    content = await file.read()
+    f.write(content)
+
   # 4) OpenSearch에 저장
-  pdf_id = str(id)
+  pdf_id = str(conversation["id"])
 
   for i, (chunk, vec) in enumerate(zip(chunks, dense_vecs)):
     client.index(
@@ -103,13 +124,32 @@ async def upload_pdf(id: str, file: UploadFile = File(...)):
       },
     )
 
-  """PDF 파일 업로드하면서 대화 생성"""
-  title = file.filename
-  create_conversation(title)
-
   # TODO: FE에 chunks와 해당하는 ID 같이 내려줘서 프론트에서 작업이 가능하게해야할듯
   return PdfResponse(
-    pdfId=pdf_id,
+    pdf_id=pdf_id,
     chunks=len(chunks),
     message="PDF 텍스트 청킹 및 bge-m3 임베딩 + 인덱싱 완료"
   )
+
+
+UPLOAD_DIR = "pdfs"
+
+@router.get("/pdf/{pdf_id}")
+async def get_pdf(pdf_id: str):
+    print("[get_pdf] called with:", pdf_id)
+
+    # pdf_id에 확장자 없으면 .pdf 붙이기
+    if not pdf_id.endswith(".pdf"):
+        pdf_id = f"{pdf_id}.pdf"
+
+    file_path = os.path.join(UPLOAD_DIR, pdf_id)
+    print("[get_pdf] file_path:", file_path, "exists?", os.path.exists(file_path))
+
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="PDF 파일을 찾을 수 없습니다.")
+
+    return FileResponse(
+        path=file_path,
+        media_type="application/pdf",
+        filename=pdf_id,
+    )

@@ -12,13 +12,15 @@ import {
 } from '@/components/ui/empty'
 
 interface PdfEmptyUploadPanelProps {
-  onFileSelected?: (file: File | null) => void
+  onUpload?: (file: File | null) => void
+  isPending: boolean
 }
 
 export function PdfEmptyUploadPanel({
-  onFileSelected,
+  onUpload,
+  isPending,
 }: PdfEmptyUploadPanelProps) {
-  const [fileName, setFileName] = useState<string | null>(null)
+  const [file, setFile] = useState<File | null>(null)
   const [, setError] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
   const inputRef = useRef<HTMLInputElement | null>(null)
@@ -27,12 +29,12 @@ export function PdfEmptyUploadPanel({
     inputRef.current?.click()
   }
 
-  const validatePdf = (file: File | null): File | null => {
-    if (!file) return null
+  const validatePdf = (f: File | null): File | null => {
+    if (!f) return null
 
     const isPdf =
-      file.type === 'application/pdf' ||
-      file.name.toLowerCase().endsWith('.pdf')
+      f.type === 'application/pdf' ||
+      f.name.toLowerCase().endsWith('.pdf')
 
     if (!isPdf) {
       setError('PDF 파일만 업로드할 수 있어요.')
@@ -40,15 +42,15 @@ export function PdfEmptyUploadPanel({
     }
 
     setError(null)
-    return file
+    return f
   }
 
-  const handleFile = (file: File | null) => {
-    const validFile = validatePdf(file)
+  const handleFile = (f: File | null) => {
+    const validFile = validatePdf(f)
     if (!validFile) return
+    setFile(f)
 
-    setFileName(validFile.name)
-    onFileSelected?.(validFile)
+    return f
   }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -73,8 +75,16 @@ export function PdfEmptyUploadPanel({
     e.stopPropagation()
     setIsDragging(false)
 
-    const file = e.dataTransfer.files?.[0] ?? null
-    handleFile(file)
+    const f = e.dataTransfer.files?.[0] ?? null
+    handleFile(f)
+  }
+
+  const handleSubmit = async () => {
+    if (!file) {
+      return
+    }
+    
+    onUpload?.(file)
   }
 
   return (
@@ -90,10 +100,21 @@ export function PdfEmptyUploadPanel({
         <EmptyMedia variant="icon">
           <FileText />
         </EmptyMedia>
-        <EmptyTitle>아직 업로드된 청약 공고문이 없어요</EmptyTitle>
-        <EmptyDescription>
-          여기에 PDF 파일을 드래그하거나, 버튼을 눌러 업로드할 수 있어요.
-        </EmptyDescription>
+        {file ? (
+          <>
+            <EmptyTitle>{file.name}</EmptyTitle>
+            <EmptyDescription>
+              이 파일을 임베딩하여 분석을 시작하시겠습니까?
+            </EmptyDescription>
+          </>
+        ) : (
+          <>
+            <EmptyTitle>아직 업로드된 청약 공고문이 없어요</EmptyTitle>
+            <EmptyDescription>
+              여기에 PDF 파일을 드래그하거나, 버튼을 눌러 업로드할 수 있어요.
+            </EmptyDescription>
+          </>
+        )}
       </EmptyHeader>
       <EmptyContent>
         <input
@@ -104,12 +125,27 @@ export function PdfEmptyUploadPanel({
           onChange={handleChange}
         />
 
-        <Button variant="outline" size="sm" onClick={handleButtonClick}>
-          Upload PDF
-        </Button>
-
-        {fileName && (
-          <p className="mt-2 text-xs text-muted-foreground">{fileName}</p>
+        {file ? (
+          <div className="flex flex-col gap-3 items-center">
+            <Button 
+              size="sm" 
+              onClick={handleSubmit}
+              disabled={isPending}
+            >
+              {isPending ? '분석 중...' : '분석 시작하기'}
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => setFile(null)}
+            >
+              취소
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" size="sm" onClick={handleButtonClick}>
+            Upload PDF
+          </Button>
         )}
       </EmptyContent>
     </Empty>
