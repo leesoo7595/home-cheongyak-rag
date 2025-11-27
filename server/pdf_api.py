@@ -126,7 +126,7 @@ async def upload_pdf(file: UploadFile = File(...)):
 
   # TODO: FE에 chunks와 해당하는 ID 같이 내려줘서 프론트에서 작업이 가능하게해야할듯
   return PdfResponse(
-    pdf_id=pdf_id,
+    pdfId=pdf_id,
     chunks=len(chunks),
     message="PDF 텍스트 청킹 및 bge-m3 임베딩 + 인덱싱 완료"
   )

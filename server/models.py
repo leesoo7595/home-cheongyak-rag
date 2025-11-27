@@ -28,6 +28,6 @@ class CreateMessageResponse(BaseModel):
   message: MessageOut
 
 class PdfResponse(BaseModel):
-  pdfId: str = Field(alias="pdf_id")
+  pdf_id: str = Field(alias="pdfId")
   chunks: int
   message: str
