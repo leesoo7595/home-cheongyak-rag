@@ -8,7 +8,7 @@ import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
 
 interface PdfViewerPanelProps {
-  file: File
+  file: Blob
 }
 
 export function PdfViewerPanel({ file }: PdfViewerPanelProps) {
@@ -42,7 +42,6 @@ export function PdfViewerPanel({ file }: PdfViewerPanelProps) {
           전체 페이지: {numPages}p
         </p>
       )}
-      <div className="mb-2 text-sm text-muted-foreground">{file.name}</div>
     </div>
   )
 }
