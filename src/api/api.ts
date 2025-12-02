@@ -34,7 +34,7 @@ export const uploadPdf = (file: File): Promise<PdfUploadResponse> => {
   const formData = new FormData()
   formData.append('file', file)
 
-  return api<PdfUploadResponse>('/pdfs', {
+  return api<PdfUploadResponse>('/conversations', {
     body: formData,
     method: 'POST',
   })
