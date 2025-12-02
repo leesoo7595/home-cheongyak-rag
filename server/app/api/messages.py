@@ -19,6 +19,11 @@ from ..services.storage import (
     CONVERSATIONS_DIR,
 )
 
+from ..services.rag import (
+    embed_in_batches,
+    search_similar_chunks,
+)
+
 router = APIRouter(
     prefix="/messages",
     tags=["messages"],
@@ -57,7 +62,19 @@ def create_message(msg: MessageIn):
     messages_path = get_messages_path(conversation_id)
     append_jsonl(messages_path, new_msg)
 
-    # 3) updated_at 갱신
+    # 3) 메세지 임베딩
+    [vecs] = embed_in_batches([new_msg["content"]])
+
+    # 4) OpenSearch KNN 검색
+    results = search_similar_chunks(conversation_id, vecs)
+
+    #  1주택자도 지원 가능 한가요?
+    #
+    # - 답변은 아래 검색된 문서에서 찾아서 합니다.
+    # ### 검색된 문서 :
+    # results
+
+    # 5) updated_at 갱신
     updated_conversation = update_conversation_updated_at(conversation_id)
 
     return CreateMessageResponse(
