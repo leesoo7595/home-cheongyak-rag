@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useNavigate } from "@tanstack/react-router"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 
-import { uploadPdf } from "@/api/api"
+import { uploadPdf } from '@/api/api'
 
 export function useUploadPdfMutation() {
   const queryClient = useQueryClient()
@@ -9,11 +9,14 @@ export function useUploadPdfMutation() {
 
   return useMutation({
     mutationFn: uploadPdf,
-    onSuccess: (data) => {
+    onSuccess: ({ conversationId }) => {
       queryClient.invalidateQueries({ queryKey: ['pdf'] })
-      queryClient.invalidateQueries({ queryKey: ["conversations"] })
+      queryClient.invalidateQueries({ queryKey: ['conversations'] })
 
-      navigate({ to: '/f/$conversationId', params: { conversationId: data.pdfId } })
+      navigate({
+        to: '/f/$conversationId',
+        params: { conversationId },
+      })
     },
     onError: (error) => {
       console.log(error)

@@ -70,7 +70,7 @@ def embed_in_batches(chunks: List[str], size: int = 24):
 # ---------- 인덱싱 ----------
 
 def index_chunks_for_pdf(
-    pdf_id: str,
+    conversation_id: str,
     chunks: List[str],
     dense_vecs: List[list[float]],
 ) -> None:
@@ -80,9 +80,9 @@ def index_chunks_for_pdf(
     for i, (chunk, vec) in enumerate(zip(chunks, dense_vecs)):
         client.index(
             index=INDEX_NAME,
-            id=f"{pdf_id}-{i}",
+            id=f"{conversation_id}-{i}",
             body={
-                "pdf_id": pdf_id,
+                "pdf_id": conversation_id,
                 "chunk_index": i,
                 "text": chunk,
                 "embedding": vec,

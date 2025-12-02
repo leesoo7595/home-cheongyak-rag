@@ -22,8 +22,6 @@ export interface SaveMessageResponse {
   message: MessageResponse
 }
 
-export interface PdfResponse {
-  pdfId: string
-  chunks: number
-  message: string
+export interface PdfUploadResponse {
+  conversationId: string
 }

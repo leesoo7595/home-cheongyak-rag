@@ -57,10 +57,8 @@ class CreateMessageResponse(BaseModel):
 # ---------------------------------------
 # PdfResponse: 서버 → 프론트
 # ---------------------------------------
-class PdfResponse(BaseModel):
-    pdf_id: str = Field(serialization_alias="pdfId")
-    chunks: int
-    message: str
+class PdfUploadResponse(BaseModel):
+    conversation_id: str = Field(serialization_alias="conversationId")
 
     class Config:
         by_alias = True

@@ -3,7 +3,7 @@ import type {
   Conversation,
   MessageRequest,
   MessageResponse,
-  PdfResponse,
+  PdfUploadResponse,
   SaveMessageResponse,
 } from './api.types'
 import type {
@@ -30,11 +30,11 @@ export const fetchConversations = (): Promise<Conversation[]> => {
   return api<Conversation[]>(`/conversations`)
 }
 
-export const uploadPdf = (file: File): Promise<PdfResponse> => {
+export const uploadPdf = (file: File): Promise<PdfUploadResponse> => {
   const formData = new FormData()
   formData.append('file', file)
 
-  return api<PdfResponse>('/pdfs', {
+  return api<PdfUploadResponse>('/pdfs', {
     body: formData,
     method: 'POST',
   })

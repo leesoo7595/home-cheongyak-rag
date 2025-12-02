@@ -11,7 +11,7 @@ from ..services.rag import (
     embed_in_batches,
     index_chunks_for_pdf,
 )
-from ..models.schemas import PdfResponse
+from ..models.schemas import PdfUploadResponse
 
 
 router = APIRouter(
@@ -28,7 +28,7 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 # ---------------------------------------------------------
 # PDF 업로드 → 텍스트 추출 → 청킹 → 임베딩 → OpenSearch 인덱싱
 # ---------------------------------------------------------
-@router.post("", response_model=PdfResponse)
+@router.post("", response_model=PdfUploadResponse)
 async def upload_pdf(file: UploadFile = File(...)):
     # 1) PDF 파일인지 확인
     if file.content_type != "application/pdf":
@@ -58,10 +58,10 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     # 5) 대화(conversation) 생성
     title = file.filename
-    pdf_id = create_conversation(title)["id"]
+    conversation_id = create_conversation(title)["id"]
 
     # 6) PDF 파일 저장
-    pdf_path = UPLOAD_DIR / f"{pdf_id}.pdf"
+    pdf_path = UPLOAD_DIR / f"{conversation_id}.pdf"
 
     # file 포인터 리셋 후 저장
     await file.seek(0)
@@ -69,23 +69,19 @@ async def upload_pdf(file: UploadFile = File(...)):
         f.write(await file.read())
 
     # 7) OpenSearch 인덱싱
-    index_chunks_for_pdf(pdf_id, chunks, dense_vecs)
+    index_chunks_for_pdf(conversation_id, chunks, dense_vecs)
 
-    return PdfResponse(
-        pdfId=pdf_id,
-        chunks=len(chunks),
-        message="PDF 텍스트 청킹 + 임베딩 + OpenSearch 인덱싱 완료",
-    )
+    return PdfUploadResponse(conversation_id=conversation_id)
 
 
 # ---------------------------------------------------------
 # 저장된 PDF 파일 가져오기
 # ---------------------------------------------------------
-@router.get("/{pdf_id}")
-async def get_pdf(pdf_id: str):
-    print("[get_pdf] ID:", pdf_id)
+@router.get("/{conversation_id}")
+async def get_pdf(conversation_id: str):
+    print("[get_pdf] ID:", conversation_id)
 
-    pdf_file = f"{pdf_id}.pdf" if not pdf_id.endswith(".pdf") else pdf_id
+    pdf_file = f"{conversation_id}.pdf" if not conversation_id.endswith(".pdf") else conversation_id
     pdf_path = UPLOAD_DIR / pdf_file
 
     print("[get_pdf] file_path:", pdf_path, "exists?", pdf_path.exists())
