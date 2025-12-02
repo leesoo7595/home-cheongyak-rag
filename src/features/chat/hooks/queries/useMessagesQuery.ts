@@ -1,5 +1,5 @@
-import { fetchMessages } from '@/api/localdb'
-import type { MessageResponse } from '@/api/localdb.types'
+import { fetchMessages } from '@/api/api'
+import type { MessageResponse } from '@/api/api.types'
 import { useQuery } from '@tanstack/react-query'
 
 export function useMessagesQuery(conversationId?: string) {

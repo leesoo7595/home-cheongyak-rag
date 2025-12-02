@@ -4,7 +4,6 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [tanstackRouter({ target: 'react' }), react(), tailwindcss()],
   resolve: {
@@ -14,11 +13,9 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/_localdb': 'http://localhost:4000',
       '/api': {
-        target: 'https://clovastudio.stream.ntruss.com',
+        target: 'http://localhost:4000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

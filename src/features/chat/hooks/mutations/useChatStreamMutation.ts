@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
 
-import { streamChatCompletions } from '@/api/chat-completions'
+import { streamChatCompletions } from '@/api/api'
 import type { ChatCompletionsRequestMessage } from '@/api/chat-completions.types'
 
 import { useSaveMessageMutation } from './useSaveMessage'

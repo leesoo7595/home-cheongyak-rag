@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { saveMessage } from '@/api/localdb'
+import { saveMessage } from '@/api/api'
 import type {
   MessageRequest,
   SaveMessageResponse,
-} from '@/api/localdb.types'
+} from '@/api/api.types'
 
 export function useSaveMessageMutation() {
   const queryClient = useQueryClient()
