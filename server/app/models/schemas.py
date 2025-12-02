@@ -1,9 +1,8 @@
 from pydantic import BaseModel, Field
 from typing import Optional
 
-
 # ---------------------------------------
-# MessageIn: 프론트 → 서버
+# MessageIn: 프론트 → 서버 (요청)
 # ---------------------------------------
 class MessageIn(BaseModel):
     role: str
@@ -11,21 +10,24 @@ class MessageIn(BaseModel):
     conversation_id: Optional[str] = Field(default=None, alias="conversationId")
 
     class Config:
-        populate_by_name = True  # 서버에서도 conversation_id 로 접근 가능하게
+        # 프론트에서 camelCase(conversationId)로 보내도 되고,
+        # 서버 내부에서 conversation_id로도 세팅 가능하게
+        populate_by_name = True
 
 
 # ---------------------------------------
-# MessageOut: 서버 → 프론트
+# MessageOut: 서버 → 프론트 (응답)
 # ---------------------------------------
 class MessageOut(BaseModel):
     id: str
-    conversation_id: str = Field(alias="conversationId")
+    conversation_id: str = Field(serialization_alias="conversationId")
     role: str
     content: str
-    created_at: str = Field(alias="createdAt")
+    created_at: str = Field(serialization_alias="createdAt")
 
     class Config:
-        by_alias = True  # 서버 REST 응답 시 camelCase로 자동 변환
+        # 응답 직렬화할 때 alias(= serialization_alias)를 쓰도록
+        by_alias = True
 
 
 # ---------------------------------------
@@ -34,8 +36,8 @@ class MessageOut(BaseModel):
 class Conversation(BaseModel):
     id: str
     title: str
-    created_at: str = Field(alias="createdAt")
-    updated_at: str = Field(alias="updatedAt")
+    created_at: str = Field(serialization_alias="createdAt")
+    updated_at: str = Field(serialization_alias="updatedAt")
 
     class Config:
         by_alias = True
@@ -56,7 +58,7 @@ class CreateMessageResponse(BaseModel):
 # PdfResponse: 서버 → 프론트
 # ---------------------------------------
 class PdfResponse(BaseModel):
-    pdf_id: str = Field(alias="pdfId")
+    pdf_id: str = Field(serialization_alias="pdfId")
     chunks: int
     message: str
 
