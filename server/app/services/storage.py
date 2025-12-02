@@ -4,10 +4,14 @@ from uuid import uuid4
 from datetime import datetime
 import json
 
-BASE_PATH = Path(__file__).parent
-CONVERSATIONS_PATH = BASE_PATH / "conversations.jsonl"
-CONVERSATIONS_DIR = BASE_PATH / "conversations"
-CONVERSATIONS_DIR.mkdir(exist_ok=True)  # 디렉터리 없으면 생성
+# server/app/services/storage.py → server/app/services → server → project_root
+BASE_DIR = Path(__file__).resolve().parents[2]   # server/
+DATA_DIR = BASE_DIR / "data"
+DATA_DIR.mkdir(exist_ok=True)
+
+CONVERSATIONS_PATH = DATA_DIR / "conversations.jsonl"
+CONVERSATIONS_DIR = DATA_DIR / "conversations"
+CONVERSATIONS_DIR.mkdir(parents=True, exist_ok=True) # 디렉터리 없으면 생성
 
 
 def get_messages_path(conversation_id: str) -> Path:
