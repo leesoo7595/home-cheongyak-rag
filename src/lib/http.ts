@@ -128,4 +128,3 @@ function createHttpClient(baseURL: string) {
 }
 
 export const api = createHttpClient('http://localhost:5173/api')
-export const serverApi = createHttpClient('http://localhost:4000')
