@@ -11,8 +11,6 @@ from ..models.schemas import (
 )
 
 from ..services.rag import (
-    INDEX_NAME,
-    client,
     chunk_text,
     embed_in_batches,
     index_chunks_for_pdf,
@@ -66,10 +64,10 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     # 5) 대화(conversation) 생성
     title = file.filename
-    conversation_id = create_conversation(title)["id"]
+    id = create_conversation(title)["id"]
 
     # 6) PDF 파일 저장
-    pdf_path = UPLOAD_DIR / f"{conversation_id}.pdf"
+    pdf_path = UPLOAD_DIR / f"{id}.pdf"
 
     # file 포인터 리셋 후 저장
     await file.seek(0)
@@ -77,9 +75,9 @@ async def upload_pdf(file: UploadFile = File(...)):
         f.write(await file.read())
 
     # 7) OpenSearch 인덱싱
-    index_chunks_for_pdf(conversation_id, chunks, dense_vecs)
+    index_chunks_for_pdf(id, chunks, dense_vecs)
 
-    return PdfUploadResponse(conversation_id=conversation_id)
+    return PdfUploadResponse(conversation_id=id)
 
 @router.get("/conversations", response_model=list[Conversation])
 def get_conversations():
@@ -92,13 +90,13 @@ def get_conversations():
     return convos
 
 
-@router.get("/conversations/{conversation_id}/messages", response_model=list[MessageOut])
-def get_conversation_messages(conversation_id: str):
+@router.get("/conversations/{id}/messages", response_model=list[MessageOut])
+def get_conversation_messages(id: str):
     """
     특정 대화의 메시지 목록 가져오기.
     메시지 파일이 없으면 빈 리스트 반환.
     """
-    path = get_messages_path(conversation_id)
+    path = get_messages_path(id)
     msgs: list[MessageOut] = []
 
     if not path.exists():
@@ -110,11 +108,11 @@ def get_conversation_messages(conversation_id: str):
     return msgs
 
 
-def _resolve_pdf_path(conversation_id: str) -> Path:
+def _resolve_pdf_path(id: str) -> Path:
     pdf_file = (
-        f"{conversation_id}.pdf"
-        if not conversation_id.endswith(".pdf")
-        else conversation_id
+        f"{id}.pdf"
+        if not id.endswith(".pdf")
+        else id
     )
     return UPLOAD_DIR / pdf_file
 
@@ -122,9 +120,9 @@ def _resolve_pdf_path(conversation_id: str) -> Path:
 # ---------------------------------------------------------
 # 저장된 PDF 파일 가져오기
 # ---------------------------------------------------------
-@router.get("/conversations/{conversation_id}/pdf")
-async def get_pdf(conversation_id: str):
-    pdf_path = _resolve_pdf_path(conversation_id)
+@router.get("/conversations/{id}/pdf")
+async def get_pdf(id: str):
+    pdf_path = _resolve_pdf_path(id)
 
     if not pdf_path.exists():
         raise HTTPException(404, "PDF 파일을 찾을 수 없습니다.")
@@ -136,13 +134,13 @@ async def get_pdf(conversation_id: str):
     )
 
 # 예전 스타일 경로 (/api/pdfs/{id}.pdf)도 같이 지원
-@router.get("/pdfs/{pdf_id}")
-async def get_pdf_legacy(pdf_id: str):
+@router.get("/pdfs/{id}")
+async def get_pdf_legacy(id: str):
     """
     프론트에서 아직 /api/pdfs/{id}.pdf 로 요청하는 경우를 위한 호환용 라우트.
     pdf_id = "5a36...c34f.pdf" 또는 "5a36...c34f" 둘 다 처리.
     """
-    pdf_path = _resolve_pdf_path(pdf_id)
+    pdf_path = _resolve_pdf_path(id)
 
     if not pdf_path.exists():
         raise HTTPException(404, "PDF 파일을 찾을 수 없습니다.")

@@ -57,9 +57,9 @@ def save_conversations(convos: Dict[str, Dict[str, Any]]) -> None:
 def create_conversation(title: str) -> Dict[str, Any]:
     """새 대화 생성"""
     now = datetime.utcnow().isoformat()
-    convo_id = str(uuid4())
+    id = str(uuid4())
     convo = {
-        "id": convo_id,
+        "id": id,
         "title": title,
         "created_at": now,
         "updated_at": now,
@@ -68,14 +68,14 @@ def create_conversation(title: str) -> Dict[str, Any]:
     return convo
 
 
-def update_conversation_updated_at(conversation_id: str) -> Dict[str, Any]:
+def update_conversation_updated_at(id: str) -> Dict[str, Any]:
     """대화의 updated_at 갱신"""
     convos = load_conversations()
-    convo = convos.get(conversation_id)
+    convo = convos.get(id)
     if not convo:
         raise ValueError("Conversation not found")
 
     convo["updated_at"] = datetime.utcnow().isoformat()
-    convos[conversation_id] = convo
+    convos[id] = convo
     save_conversations(convos)
     return convo
