@@ -1,15 +1,15 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from starlette.responses import FileResponse
 import fitz
-import os
 from pathlib import Path
 
 from ..services.storage import create_conversation
 from ..services.rag import (
+    INDEX_NAME,
     client,
     chunk_text,
     embed_in_batches,
-    INDEX_NAME,
+    index_chunks_for_pdf,
 )
 from ..models.schemas import PdfResponse
 
@@ -58,29 +58,18 @@ async def upload_pdf(file: UploadFile = File(...)):
 
     # 5) 대화(conversation) 생성
     title = file.filename
-    conversation = create_conversation(title)
-    pdf_id = conversation["id"]
+    pdf_id = create_conversation(title)["id"]
 
     # 6) PDF 파일 저장
     pdf_path = UPLOAD_DIR / f"{pdf_id}.pdf"
 
     # file 포인터 리셋 후 저장
-    await file.seek(0)  # 파일 포인터 맨 앞으로 이동
+    await file.seek(0)
     with pdf_path.open("wb") as f:
         f.write(await file.read())
 
     # 7) OpenSearch 인덱싱
-    for i, (chunk, vec) in enumerate(zip(chunks, dense_vecs)):
-        client.index(
-            index=INDEX_NAME,
-            id=f"{pdf_id}-{i}",
-            body={
-                "pdf_id": pdf_id,
-                "chunk_index": i,
-                "text": chunk,
-                "embedding": vec,
-            },
-        )
+    index_chunks_for_pdf(pdf_id, chunks, dense_vecs)
 
     return PdfResponse(
         pdfId=pdf_id,

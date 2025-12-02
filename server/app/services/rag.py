@@ -66,3 +66,25 @@ def embed_in_batches(chunks: List[str], size: int = 24):
         all_vecs.extend(encoded["dense_vecs"])
 
     return all_vecs
+
+# ---------- 인덱싱 ----------
+
+def index_chunks_for_pdf(
+    pdf_id: str,
+    chunks: List[str],
+    dense_vecs: List[list[float]],
+) -> None:
+    """
+    주어진 pdf_id에 대해 (chunk, embedding) 쌍을 OpenSearch에 인덱싱.
+    """
+    for i, (chunk, vec) in enumerate(zip(chunks, dense_vecs)):
+        client.index(
+            index=INDEX_NAME,
+            id=f"{pdf_id}-{i}",
+            body={
+                "pdf_id": pdf_id,
+                "chunk_index": i,
+                "text": chunk,
+                "embedding": vec,
+            },
+        )
