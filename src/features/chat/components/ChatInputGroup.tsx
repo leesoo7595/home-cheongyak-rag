@@ -1,78 +1,57 @@
-import type { ChangeEvent } from 'react'
+import type { ChangeEvent, KeyboardEvent } from 'react'
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupText,
   InputGroupTextarea,
-} from '../../../components/ui/input-group'
-import { ArrowUpIcon, PlusIcon } from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../../../components/ui/dropdown-menu'
-import { Separator } from '../../../components/ui/separator'
+} from '@/components/ui/input-group'
+import { ArrowUpIcon } from 'lucide-react'
 
 type ChatInputGroupProps = {
   value: string
   onChange: (value: string) => void
   onSubmit: () => void
   disabled?: boolean
+  placeholder?: string
 }
-
 export function ChatInputGroup({
   value,
   onChange,
   onSubmit,
+  placeholder = 'Ask, Search or Chat...',
   disabled = false,
 }: ChatInputGroupProps) {
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value)
   }
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      if (!disabled && value.trim()) {
+        onSubmit()
+      }
+    }
+  }
+
   return (
     <InputGroup>
       <InputGroupTextarea
-        placeholder="Ask, Search or Chat..."
+        placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        disabled={disabled}
+        onKeyDown={handleKeyDown}
       />
       <InputGroupAddon align="block-end">
         <InputGroupButton
-          variant="outline"
-          className="rounded-full"
-          size="icon-xs"
-        >
-          <PlusIcon />
-        </InputGroupButton>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <InputGroupButton variant="ghost">Auto</InputGroupButton>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            side="top"
-            align="start"
-            className="[--radius:0.95rem]"
-          >
-            <DropdownMenuItem>Auto</DropdownMenuItem>
-            <DropdownMenuItem>Agent</DropdownMenuItem>
-            <DropdownMenuItem>Manual</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <InputGroupText className="ml-auto">52% used</InputGroupText>
-        <Separator orientation="vertical" className="!h-4" />
-        <InputGroupButton
+          type="button"
           variant="default"
-          className="rounded-full"
+          className="ml-auto rounded-full"
           size="icon-xs"
           onClick={onSubmit}
           disabled={disabled}
         >
           <ArrowUpIcon />
-          <span className="sr-only">Send</span>
         </InputGroupButton>
       </InputGroupAddon>
     </InputGroup>

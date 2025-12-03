@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
 import { useSaveMessageMutation } from './mutations/useSaveMessage'
 import { useChatStreamMutation } from './mutations/useChatStreamMutation'
@@ -12,49 +12,70 @@ export function useChatInput(conversationId?: string): {
   value: string
   setValue: (value: string) => void
   handleSubmit: () => void
+  isSending: boolean
+  isSaving: boolean
+  isStreaming: boolean
 } {
   const [value, setValue] = useState('')
 
   const saveMessage = useSaveMessageMutation()
-  const { streamText, mutate: streamChat } = useChatStreamMutation()
+  const {
+    streamText,
+    mutate: streamChat,
+    isPending: isStreaming,
+  } = useChatStreamMutation()
 
   const { data: messages } = useMessagesQuery(conversationId)
+  const isSaving = saveMessage.isPending
+  const isSending = isSaving || isStreaming
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (!conversationId) {
-      throw new Error('Conversation ID is required')
+      console.error('Conversation ID is required for useChatInput')
+      return
     }
 
-    const response = await saveMessage.mutateAsync({
-      role: 'user',
-      content: value,
-      conversationId,
-    })
+    const trimmed = value.trim()
+    if (!trimmed || isSending) return
 
-    const historyMessages =
-      messages?.map((m) => ({
-        role: m.role,
-        content: m.role === 'user' ? m.content + m.context : m.content,
-      })) ?? []
-    const payloadMessages = [
-      ...historyMessages,
-      {
-        role: 'user' as ChatCompletionsRole,
-        content: value + response.message.context,
-      },
-    ]
+    try {
+      const response = await saveMessage.mutateAsync({
+        role: 'user',
+        content: trimmed,
+        conversationId,
+      })
 
-    streamChat({
-      messages: payloadMessages,
-      conversationId,
-    })
-    setValue('')
-  }
+      const historyMessages =
+        messages?.map((m) => ({
+          role: m.role,
+          content: m.role === 'user' ? m.content + m.context : m.content,
+        })) ?? []
+      const payloadMessages = [
+        ...historyMessages,
+        {
+          role: 'user' as ChatCompletionsRole,
+          content: trimmed + response.message.context,
+        },
+      ]
+
+      streamChat({
+        messages: payloadMessages,
+        conversationId,
+      })
+      setValue('')
+    } catch (error) {
+      // TODO: toast 등으로 에러 노출
+      console.error('Failed to send message', error)
+    }
+  }, [conversationId, value, isSending, messages, saveMessage, streamChat])
 
   return {
     streamText,
     value,
     setValue,
     handleSubmit,
+    isSending,
+    isSaving,
+    isStreaming,
   }
 }

@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { ChatDetailView } from '@/features/chat/views/ChatDetailView'
+import { ChatInputProvider } from '@/contexts/ChatInputProvider'
 
 export const Route = createFileRoute('/f/$conversationId')({
   component: RouteComponent,
@@ -9,5 +10,9 @@ export const Route = createFileRoute('/f/$conversationId')({
 function RouteComponent() {
   const { conversationId } = Route.useParams()
 
-  return <ChatDetailView conversationId={conversationId} />
+  return (
+    <ChatInputProvider conversationId={conversationId}>
+      <ChatDetailView conversationId={conversationId} />
+    </ChatInputProvider>
+  )
 }
