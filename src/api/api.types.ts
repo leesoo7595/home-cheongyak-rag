@@ -8,6 +8,7 @@ export interface MessageResponse extends ChatCompletionsRequestMessage {
   id: string
   conversationId: string
   createdAt: string
+  context: string
 }
 
 export interface Conversation {

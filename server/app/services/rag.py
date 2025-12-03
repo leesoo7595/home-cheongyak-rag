@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, Dict, List
 import os
 
 from FlagEmbedding import BGEM3FlagModel
@@ -88,3 +88,52 @@ def index_chunks_for_pdf(
                 "embedding": vec,
             },
         )
+
+# ---------- KNN 검색 ----------
+
+def search_similar_chunks(
+    conversation_id: str,
+    query_vec: List[float],
+    size: int = 10,
+    k: int = 10,
+) -> Dict[str, Any]:
+    """
+    특정 conversation(pdf_id) 내부에서,
+    query 임베딩과 가장 유사한 청크들을 OpenSearch로 조회하는 함수.
+
+    Args:
+        conversation_id (str): pdf_id (= conversation_id)
+        query_vec (List[float]): bge-m3 dense vector (768차원 or 다차원)
+        size (int): 반환할 문서 개수
+        k (int): knn 이웃 개수
+
+    Returns:
+        dict: opensearch search 결과 전체
+    """
+    body = {
+        "size": size,
+        "query": {
+            "bool": {
+                "filter": [
+                    {"terms": {"pdf_id": [conversation_id]}}
+                ],
+                "must": [
+                    {
+                        "knn": {
+                            "embedding": {
+                                "vector": query_vec,
+                                "k": k
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+
+    result = client.search(
+        index=INDEX_NAME,
+        body=body,
+    )
+
+    return result

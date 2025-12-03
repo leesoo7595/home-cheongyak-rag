@@ -18,6 +18,10 @@ from ..services.storage import (
     iter_jsonl,
     CONVERSATIONS_DIR,
 )
+from ..services.rag import (
+    embed_in_batches,
+    search_similar_chunks,
+)
 
 router = APIRouter(
     prefix="/messages",
@@ -25,7 +29,7 @@ router = APIRouter(
 )
 
 @router.post("", response_model=CreateMessageResponse)
-def create_message(msg: MessageIn):
+async def create_message(msg: MessageIn):
     """
     일반 채팅 메시지 생성 엔드포인트.
     - 기존 대화(conversation_id 필수)에 메시지 추가
@@ -43,26 +47,52 @@ def create_message(msg: MessageIn):
         raise HTTPException(status_code=404, detail="Conversation not found")
 
     conversation_id = conversation["id"]
+    created_at = datetime.utcnow().isoformat()
+    context_text = ""
 
-    # 2) 메시지 JSONL에 저장
-    now = datetime.utcnow().isoformat()
+    if (msg.role == "user"):
+        # 2) 메세지 임베딩
+        [vecs] = embed_in_batches([msg.content])
+
+        # 3) OpenSearch KNN 검색
+        search_result = search_similar_chunks(conversation_id, vecs)
+
+        # hits 리스트만 꺼내기
+        hits = search_result.get("hits", {}).get("hits", [])
+
+        # 4) RAG 컨텍스트 문자열 구성
+        context: list[str] = []
+        for h in hits:
+            source = h.get("_source") or {}
+            text = source.get("text") or ""
+            if text:
+                context.append(text)
+        
+        context_text = (
+            "- 답변은 아래 검색된 문서에서 찾아서 합니다.\n"
+            "### 검색된 문서:\n" +
+            "\n\n".join(context)
+        )
+
     new_msg = {
         "id": str(uuid4()),
         "conversation_id": conversation_id,
         "role": msg.role,
         "content": msg.content,
-        "created_at": now,
+        "context": context_text,
+        "created_at": created_at,
     }
 
+    # 5) 메시지 JSONL에 저장
     messages_path = get_messages_path(conversation_id)
     append_jsonl(messages_path, new_msg)
 
-    # 3) updated_at 갱신
+    # 6) updated_at 갱신
     updated_conversation = update_conversation_updated_at(conversation_id)
 
     return CreateMessageResponse(
         conversation=Conversation(**updated_conversation),
-        message=MessageOut(**new_msg),
+        message=MessageOut(**new_msg)
     )
 
 
