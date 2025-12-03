@@ -25,18 +25,24 @@ export function useChatInput(conversationId?: string): {
       throw new Error('Conversation ID is required')
     }
 
-    const msg = { role: 'user' as ChatCompletionsRole, content: value }
-    await saveMessage.mutateAsync({
-      ...msg,
+    const response = await saveMessage.mutateAsync({
+      role: 'user',
+      content: value,
       conversationId,
     })
 
     const historyMessages =
       messages?.map((m) => ({
         role: m.role,
-        content: m.content,
+        content: m.role === 'user' ? m.content + m.context : m.content,
       })) ?? []
-    const payloadMessages = [...historyMessages, msg]
+    const payloadMessages = [
+      ...historyMessages,
+      {
+        role: 'user' as ChatCompletionsRole,
+        content: value + response.message.context,
+      },
+    ]
 
     streamChat({
       messages: payloadMessages,

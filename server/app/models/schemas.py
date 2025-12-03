@@ -7,7 +7,7 @@ from typing import Optional
 class MessageIn(BaseModel):
     role: str
     content: str
-    conversation_id: Optional[str] = Field(default=None, alias="conversationId")
+    conversation_id: Optional[str] = Field(validation_alias="conversationId")
 
     class Config:
         # 프론트에서 camelCase(conversationId)로 보내도 되고,
@@ -23,6 +23,7 @@ class MessageOut(BaseModel):
     conversation_id: str = Field(serialization_alias="conversationId")
     role: str
     content: str
+    context: str
     created_at: str = Field(serialization_alias="createdAt")
 
     class Config:

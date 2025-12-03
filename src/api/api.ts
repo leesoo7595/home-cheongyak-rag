@@ -21,8 +21,11 @@ export const saveMessage = (
   body: MessageRequest
 ): Promise<SaveMessageResponse> => {
   return api<SaveMessageResponse>(`/messages`, {
-    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+    },
     method: 'POST',
+    body: JSON.stringify(body),
   })
 }
 
