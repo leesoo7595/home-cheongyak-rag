@@ -8,6 +8,10 @@ interface NewChatViewProps {
 export function NewChatView({ disabled }: NewChatViewProps) {
   const { value, setValue, handleSubmit } = useChatInputController()
 
+  const placeholder = disabled
+    ? '오른쪽에서 PDF를 업로드하면 채팅을 시작할 수 있어요.'
+    : 'Ask, Search or Chat...'
+
   return (
     <div className="flex flex-col px-6 py-8 overflow-y-auto">
       <div className="flex flex-1 flex-col items-center justify-center gap-4">
@@ -22,6 +26,7 @@ export function NewChatView({ disabled }: NewChatViewProps) {
           onChange={setValue}
           onSubmit={handleSubmit}
           disabled={disabled}
+          placeholder={placeholder}
         />
       </div>
     </div>

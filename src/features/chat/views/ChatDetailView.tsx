@@ -11,7 +11,10 @@ type ChatDetailViewProps = {
 
 export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
   const { data = [] } = useMessagesQuery(conversationId)
-  const { value, setValue, handleSubmit, streamText } = useChatInputController()
+  const { value, setValue, handleSubmit, streamText, isSending } =
+    useChatInputController()
+
+  const isSubmitDisabled = isSending || !value.trim()
 
   const bottomRef = useRef<HTMLDivElement | null>(null)
 
@@ -39,6 +42,7 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
           value={value}
           onChange={setValue}
           onSubmit={handleSubmit}
+          disabled={isSubmitDisabled}
         />
       </div>
     </div>
