@@ -8,10 +8,10 @@ import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
 
 interface PdfViewerPanelProps {
-  file: Blob
+  url: string
 }
 
-export function PdfViewerPanel({ file }: PdfViewerPanelProps) {
+export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
   const [numPages, setNumPages] = useState<number | null>(null)
 
   return (
@@ -19,7 +19,7 @@ export function PdfViewerPanel({ file }: PdfViewerPanelProps) {
       <div className="flex flex-1 justify-center overflow-auto">
         <div className="w-full max-w-[720px]">
           <Document
-            file={file}
+            file={url}
             onLoadSuccess={({ numPages }) => setNumPages(numPages)}
             loading={
               <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">

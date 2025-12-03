@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 
 interface PdfPanelState {
-  file: Blob | null
+  url: string | null
   upload: (file: File) => void
   isPending: boolean
 }
