@@ -1,4 +1,4 @@
-import { Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute, useParams } from '@tanstack/react-router'
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { ChatSidebar } from '@/features/chat/components/ChatSidebar'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -10,11 +10,13 @@ export const Route = createRootRoute({
 })
 
 function RootLayout() {
+  const { conversationId } = useParams({ strict: false })
+
   return (
     <SidebarProvider>
       <ChatSidebar />
       <AppLayout>
-        <PdfPanelProvider>
+        <PdfPanelProvider conversationId={conversationId}>
           <Outlet />
           <PdfPanel />
         </PdfPanelProvider>

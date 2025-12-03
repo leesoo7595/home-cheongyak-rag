@@ -1,14 +1,14 @@
-import { useMemo, type ReactNode } from 'react'
-import { useParams } from '@tanstack/react-router'
+import { useMemo } from 'react'
 
 import { useUploadPdfMutation } from '@/features/chat/hooks/mutations/useUploadPdf'
-
 import { PdfPanelContext } from './usePdfPanel'
 
+interface Props {
+  children: React.ReactNode
+  conversationId?: string
+}
 
-export function PdfPanelProvider({ children }: { children: ReactNode }) {
-  const { conversationId } = useParams({ from: '/f/$conversationId' }) ?? {}
-
+export function PdfPanelProvider({ children, conversationId }: Props) {
   const url = conversationId ? `/api/pdfs/${conversationId}` : null
   const { mutate: upload, isPending } = useUploadPdfMutation()
 
