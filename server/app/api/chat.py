@@ -4,6 +4,8 @@ import json
 from fastapi import APIRouter, Request, HTTPException
 from fastapi.responses import StreamingResponse
 
+from ..config.llm_config import SYSTEM_PROMPT
+
 router = APIRouter()
 
 CLOVA_BASE_URL = "https://clovastudio.stream.ntruss.com"
@@ -25,6 +27,12 @@ async def proxy_chat_completions(request: Request):
     except json.JSONDecodeError:
         raise HTTPException(status_code=400, detail="Invalid JSON body")
 
+    if body_json["messages"][0]["role"] != "system":
+        body_json["messages"].insert(0, {
+            "role": "system",
+            "content": SYSTEM_PROMPT
+        })
+
     body_json["maxCompletionTokens"] = 30000
 
     # 3) dict → bytes
@@ -43,13 +51,7 @@ async def proxy_chat_completions(request: Request):
                     "Accept": "text/event-stream",  # Clova에게도 SSE로 달라고 명시
                 },
             ) as upstream_response:
-                # 혹시 바로 에러 한 번에 떨어지는 경우를 로그로 확인
                 async for chunk in upstream_response.aiter_bytes():
-                    text_preview = chunk[:200].decode(
-                        "utf-8", errors="ignore"
-                    )
-                    print("[clova proxy] chunk:", repr(text_preview))
-                    # 그대로 프론트로 흘려보냄
                     yield chunk
 
     # 브라우저 쪽은 SSE니까 media_type 고정
