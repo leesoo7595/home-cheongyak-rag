@@ -1,30 +1,24 @@
-import { useMemo, type ReactNode } from 'react'
-import { useRouterState } from '@tanstack/react-router'
+import { useMemo } from 'react'
 
-import { usePdfQuery } from '@/features/chat/hooks/queries/usePdfQuery'
 import { useUploadPdfMutation } from '@/features/chat/hooks/mutations/useUploadPdf'
-
 import { PdfPanelContext } from './usePdfPanel'
 
+interface Props {
+  children: React.ReactNode
+  conversationId?: string
+}
 
-export function PdfPanelProvider({ children }: { children: ReactNode }) {
-  const routerState = useRouterState()
-  
-  const conversationMatch = routerState.matches.find(
-    (m) => m.routeId === '/f/$conversationId'
-  )
-  const conId = conversationMatch?.params?.conversationId as string | undefined
-
-  const { data: pdf } = usePdfQuery(conId)
+export function PdfPanelProvider({ children, conversationId }: Props) {
+  const url = conversationId ? `/api/pdfs/${conversationId}` : null
   const { mutate: upload, isPending } = useUploadPdfMutation()
 
   const value = useMemo(
     () => ({
-      file: pdf ?? null,
+      url,
       upload,
       isPending,
     }),
-    [pdf, upload, isPending],
+    [url, upload, isPending],
   )
 
   return (

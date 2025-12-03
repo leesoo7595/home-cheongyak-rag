@@ -3,19 +3,18 @@ import { PdfEmptyUploadPanel } from './PdfUploadPanel'
 import { PdfViewerPanel } from './PdfViewerPanel'
 
 export function PdfPanel() {
-  const { file, upload, isPending } = usePdfPanel()
+  const { url, upload, isPending } = usePdfPanel()
 
   return (
     <div className="flex h-full flex-col border-l ">
-      {!file ? (
+      {!url ? (
         <div className="flex flex-1 items-center justify-center px-6 py-8">
-          <PdfEmptyUploadPanel onUpload={(f) => f && upload(f)} isPending={isPending} />
+          <PdfEmptyUploadPanel
+            onUpload={(f) => f && upload(f)}
+            isPending={isPending}
+          />
         </div>
-      ) : (
-        <div className="flex flex-1 min-h-0">
-          <PdfViewerPanel file={file} />
-        </div>
-      )}
+      ) : <PdfViewerPanel url={url} />}
     </div>
   )
 }
