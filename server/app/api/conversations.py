@@ -45,18 +45,18 @@ async def upload_pdf(file: UploadFile = File(...)):
         pdf_bytes = await file.read()
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
 
-        full_text = ""
+        pages_text: list[str] = []
         for page in doc:
-            full_text += page.get_text("text") + "\n"
+            pages_text.append(page.get_text("text"))
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"PDF 처리 실패: {str(e)}")
 
-    if not full_text.strip():
+    if not any(t.strip() for t in pages_text):
         raise HTTPException(status_code=400, detail="PDF에서 텍스트를 추출할 수 없습니다.")
 
     # 3) 텍스트 청킹
-    chunks = chunk_text(full_text)
+    chunks, page_numbers = chunk_text(pages_text)
     print(f"[PDF] chunk count: {len(chunks)}")
 
     # 4) bge-m3 임베딩
@@ -75,7 +75,7 @@ async def upload_pdf(file: UploadFile = File(...)):
         f.write(await file.read())
 
     # 7) OpenSearch 인덱싱
-    index_chunks_for_pdf(id, chunks, dense_vecs)
+    index_chunks_for_pdf(id, chunks, dense_vecs, page_numbers)
 
     return PdfUploadResponse(conversation_id=id)
 

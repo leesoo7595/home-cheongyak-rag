@@ -30,21 +30,26 @@ bge_model = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
 
 # ---------- 텍스트 청킹 ----------
 
-def chunk_text(text: str, chunk_size: int = 1000) -> list[str]:
-    words = text.split()
+def chunk_text(pages_text: list[str], chunk_size: int = 500) -> tuple[list[str], list[int]]:
     chunks: list[str] = []
-    curr: list[str] = []
+    page_numbers: list[int] = []
 
-    for w in words:
-        curr.append(w)
-        if len(curr) >= chunk_size:
-            chunks.append(" ".join(curr))
-            curr = []
+    for page_number, text in enumerate(pages_text, start=1):
+        words = text.split()
+        curr: list[str] = []
+      
+        for word in words:
+            curr.append(word)
+            if len(curr) >= chunk_size:
+                chunks.append(" ".join(curr))
+                page_numbers.append(page_number)
+                curr = []
 
     if curr:
-        chunks.append(" ".join(curr))
+        chunks.append(" ".join(curr)) 
+        page_numbers.append(page_number)
 
-    return chunks
+    return chunks, page_numbers
 
 
 # ---------- 임베딩 ----------
@@ -73,6 +78,7 @@ def index_chunks_for_pdf(
     id: str,
     chunks: List[str],
     dense_vecs: List[list[float]],
+    page_numbers: List[int],
 ) -> None:
     """
     주어진 pdf_id에 대해 (chunk, embedding) 쌍을 OpenSearch에 인덱싱.
@@ -86,6 +92,7 @@ def index_chunks_for_pdf(
                 "chunk_index": i,
                 "text": chunk,
                 "embedding": vec,
+                "page_number": page_numbers[i],
             },
         )
 

@@ -65,8 +65,11 @@ async def create_message(msg: MessageIn):
         for h in hits:
             source = h.get("_source") or {}
             text = source.get("text") or ""
+            page_number = source.get("page_number")
+            chunk_index = source.get("chunk_index")
             if text:
-                context.append(text)
+                context.append(
+                    f"- 문서 내 청크 {chunk_index} : {text}\n- 청크 {chunk_index}의 페이지 출처 : {page_number}\n\n")
         
         context_text = (
             "- 답변은 아래 검색된 문서에서 찾아서 합니다.\n"
