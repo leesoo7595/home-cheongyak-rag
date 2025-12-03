@@ -1,6 +1,8 @@
-import { usePdfPanel } from '@/contexts/usePdfPanel'
-import { NewChatView } from '@/features/chat/views/NewChatView'
 import { createFileRoute } from '@tanstack/react-router'
+
+import { NewChatView } from '@/features/chat/views/NewChatView'
+import { ChatInputProvider } from '@/contexts/ChatInputProvider'
+import { usePdfPanel } from '@/contexts/usePdfPanel'
 
 export const Route = createFileRoute('/')({
   component: App,
@@ -9,5 +11,9 @@ export const Route = createFileRoute('/')({
 function App() {
   const { file } = usePdfPanel()
 
-  return <NewChatView disabled={!file} />
+  return (
+    <ChatInputProvider>
+      <NewChatView disabled={!file} />
+    </ChatInputProvider>
+  )
 }
