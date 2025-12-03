@@ -29,7 +29,6 @@ async def proxy_chat_completions(request: Request):
 
     # 3) dict → bytes
     patched_body = json.dumps(body_json).encode("utf-8")
-    print('patched_body', patched_body)
 
     async def iter_stream():
         # 제너레이터가 돌고 있는 동안에만 클라이언트/스트림이 살아있게.
@@ -44,13 +43,6 @@ async def proxy_chat_completions(request: Request):
                     "Accept": "text/event-stream",  # Clova에게도 SSE로 달라고 명시
                 },
             ) as upstream_response:
-                print(
-                    "[clova proxy] status:",
-                    upstream_response.status_code,
-                    "content-type:",
-                    upstream_response.headers.get("content-type"),
-                )
-
                 # 혹시 바로 에러 한 번에 떨어지는 경우를 로그로 확인
                 async for chunk in upstream_response.aiter_bytes():
                     text_preview = chunk[:200].decode(

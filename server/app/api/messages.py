@@ -87,7 +87,7 @@ async def create_message(msg: MessageIn):
     messages_path = get_messages_path(conversation_id)
     append_jsonl(messages_path, new_msg)
 
-    # 5) updated_at 갱신
+    # 6) updated_at 갱신
     updated_conversation = update_conversation_updated_at(conversation_id)
 
     return CreateMessageResponse(
