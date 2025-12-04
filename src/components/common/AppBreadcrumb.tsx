@@ -3,17 +3,15 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
-  BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from '@/components/ui/breadcrumb'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { SidebarTrigger } from "../ui/sidebar"
- 
+} from '@/components/ui/dropdown-menu'
+import { SidebarTrigger } from '../ui/sidebar'
 
 export function AppBreadcrumb() {
   return (
@@ -26,18 +24,12 @@ export function AppBreadcrumb() {
         <BreadcrumbItem>
           <BreadcrumbLink href="/components">
             <DropdownMenu>
-              <DropdownMenuTrigger>
-                HCX-007
-              </DropdownMenuTrigger>
+              <DropdownMenuTrigger>HCX-007</DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem>HCX-007</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
