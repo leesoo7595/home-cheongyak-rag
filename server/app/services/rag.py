@@ -30,7 +30,7 @@ bge_model = BGEM3FlagModel("BAAI/bge-m3", use_fp16=True)
 
 # ---------- 텍스트 청킹 ----------
 
-def chunk_text(pages_text: list[str], chunk_size: int = 500) -> tuple[list[str], list[int]]:
+def chunk_text(pages_text: list[str], chunk_size: int = 250) -> tuple[list[str], list[int]]:
     chunks: list[str] = []
     page_numbers: list[int] = []
 
@@ -102,7 +102,7 @@ def search_similar_chunks(
     conversation_id: str,
     query_vec: List[float],
     size: int = 10,
-    k: int = 10,
+    k: int = 20,
 ) -> Dict[str, Any]:
     """
     특정 conversation(pdf_id) 내부에서,
