@@ -1,73 +1,48 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# 📚 주택청약공고 문서 기반 Q&A 서비스 (RAG)
 
-Currently, two official plugins are available:
+![무제](https://github.com/user-attachments/assets/53d1499a-7114-4e86-ba7d-be2d24713e1a)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## React Compiler
+주택청약공고 PDF를 업로드하면 페이지 단위로 텍스트를 추출하고, 이를 청킹·임베딩하여 OpenSearch 에 저장한 뒤 사용자가 질문하면 관련 청크를 벡터 검색하여 답변을 생성하는 **RAG 기반 Q&A 서비스**입니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React(Vite), FastAPI, OpenSearch, bge-m3 임베딩 모델 기반으로 구현되었습니다.
 
-## Expanding the ESLint configuration
+## 🧪 Development Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Server
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# venv 생성 및 활성화
+$ python3 -m venv .venv
+$ . .venv/bin/activate
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# venv 환경 진입됨
+$(.venv)
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+```bash
+# .venv/bin/activate
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+# exports 설정
+export OPENSEARCH_HOST=OPENSEARCH_HOST
+export OPENSEARCH_USER=OPENSEARCH_USER
+export OPENSEARCH_PASSWD=OPENSEARCH_PASSWD
+export OPENSEARCH_PORT=OPENSEARCH_PORT
+export OPENSEARCH_INDEX=OPENSEARCH_INDEX
+export OPENSEARCH_INDEX=OPENSEARCH_INDEX
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pip install -r requirements.txt
+
+# 서버 실행
+uvicorn server.app.main:app --reload --port 4000
+```
+
+### Frontend
+
+```bash
+npm install
+npm run dev
 ```
