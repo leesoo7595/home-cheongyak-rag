@@ -97,14 +97,3 @@ async def create_message(msg: MessageIn):
         conversation=Conversation(**updated_conversation),
         message=MessageOut(**new_msg)
     )
-
-
-# ---------- 디버깅용 엔드포인트 ----------
-
-@router.get("/raw", response_model=list[dict[str, Any]])
-def get_all_messages_raw():
-    """
-    디버깅용: 모든 메시지 jsonl 덤프
-    (실 서비스에선 비활성화 추천)
-    """
-    return list(iter_jsonl(CONVERSATIONS_DIR / "all_messages.jsonl"))

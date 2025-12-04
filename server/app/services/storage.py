@@ -4,7 +4,6 @@ from uuid import uuid4
 from datetime import datetime
 import json
 
-# server/app/services/storage.py → server/app/services → server → project_root
 BASE_DIR = Path(__file__).resolve().parents[2]   # server/
 DATA_DIR = BASE_DIR / "data"
 DATA_DIR.mkdir(exist_ok=True)

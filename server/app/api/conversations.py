@@ -150,13 +150,3 @@ async def get_pdf_legacy(id: str):
         media_type="application/pdf",
         filename=pdf_path.name,
     )
-
-# ---------- 디버깅용 엔드포인트 ----------
-
-@router.get("/raw", response_model=list[dict[str, Any]])
-def get_all_conversations_raw():
-    """
-    디버깅용: conversations.jsonl 전체 덤프.
-    실제 프론트에서는 사용 안 하는 걸 추천.
-    """
-    return list(iter_jsonl(CONVERSATIONS_PATH))
