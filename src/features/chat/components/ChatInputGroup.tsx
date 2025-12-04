@@ -26,6 +26,10 @@ export function ChatInputGroup({
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.nativeEvent.isComposing || e.repeat) {
+      return
+    }
+
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       if (!disabled && value.trim()) {
@@ -48,7 +52,11 @@ export function ChatInputGroup({
           variant="default"
           className="ml-auto rounded-full"
           size="icon-xs"
-          onClick={onSubmit}
+          onClick={() => {
+            if (!disabled && value.trim()) {
+              onSubmit()
+            }
+          }}
           disabled={disabled}
         >
           <ArrowUpIcon />
