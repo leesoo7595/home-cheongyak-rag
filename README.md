@@ -10,6 +10,57 @@ React(Vite), FastAPI, OpenSearch, bge-m3 임베딩 모델 기반으로 구현되
 
 ## 🧪 Development Setup
 
+### 테스트 환경 정보
+
+- MAC M1 Max(10코어 CPU 및 32코어 GPU) 메모리 64GB
+- python 3.9.6
+- node 24.11.1
+- OpenSearch 2.18
+
+### OpenSearch 스키마
+
+```
+PUT home-cheongyak-rag-v3
+{
+  "settings": {
+    "index": {
+      "knn": true,
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    }
+  },
+  "mappings": {
+      "properties": {
+        "chunk_index": {
+          "type": "integer"
+        },
+        "embedding": {
+          "type": "knn_vector",
+          "dimension": 1024,
+          "method": {
+            "engine": "nmslib",
+            "space_type": "cosinesimil",
+            "name": "hnsw",
+            "parameters": {
+              "ef_construction": 200,
+              "m": 32
+            }
+          }
+        },
+        "pdf_id": {
+          "type": "keyword"
+        },
+        "text": {
+          "type": "text"
+        },
+        "page_number": {
+          "type": "integer"
+        }
+      }
+    }
+}
+```
+
 ### Server
 
 ```bash
@@ -25,12 +76,12 @@ $(.venv)
 # .venv/bin/activate
 
 # exports 설정
-export OPENSEARCH_HOST=OPENSEARCH_HOST
-export OPENSEARCH_USER=OPENSEARCH_USER
-export OPENSEARCH_PASSWD=OPENSEARCH_PASSWD
-export OPENSEARCH_PORT=OPENSEARCH_PORT
-export OPENSEARCH_INDEX=OPENSEARCH_INDEX
-export OPENSEARCH_INDEX=OPENSEARCH_INDEX
+export OPENSEARCH_HOST=<OPENSEARCH_HOST>
+export OPENSEARCH_USER=<OPENSEARCH_USER>
+export OPENSEARCH_PASSWD=<OPENSEARCH_PASSWD>
+export OPENSEARCH_PORT=<OPENSEARCH_PORT>
+export OPENSEARCH_INDEX=<OPENSEARCH_INDEX>
+export CLOVA_API_TOKEN=<CLOVA_API_TOKEN starting with 'nv-...'>
 ```
 
 ```bash
