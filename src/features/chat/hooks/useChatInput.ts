@@ -12,6 +12,7 @@ export function useChatInput(conversationId?: string): {
   value: string
   setValue: (value: string) => void
   handleSubmit: () => void
+  isThinking: boolean
   isSending: boolean
   isSaving: boolean
   isStreaming: boolean
@@ -23,6 +24,7 @@ export function useChatInput(conversationId?: string): {
     streamText,
     mutate: streamChat,
     isPending: isStreaming,
+    isThinking,
   } = useChatStreamMutation()
 
   const { data: messages } = useMessagesQuery(conversationId)
@@ -74,6 +76,7 @@ export function useChatInput(conversationId?: string): {
     value,
     setValue,
     handleSubmit,
+    isThinking,
     isSending,
     isSaving,
     isStreaming,
