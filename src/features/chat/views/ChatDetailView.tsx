@@ -11,7 +11,7 @@ type ChatDetailViewProps = {
 
 export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
   const { data = [] } = useMessagesQuery(conversationId)
-  const { value, setValue, handleSubmit, streamText, isSending } =
+  const { value, setValue, handleSubmit, streamText, isThinking, isSending } =
     useChatInputController()
 
   const isSubmitDisabled = isSending || !value.trim()
@@ -30,7 +30,11 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
   return (
     <div className="relative h-screen flex flex-col pt-14">
       <div className="flex-1 overflow-y-auto pb-28">
-        <ChatMessages messages={data} streamText={streamText} />
+        <ChatMessages
+          messages={data}
+          isThinking={isThinking}
+          streamText={streamText}
+        />
         <div ref={bottomRef} className="h-28" />
       </div>
       <div
