@@ -4,12 +4,14 @@ import '@/index.css'
 
 interface ChatMessagesProps {
   messages: ChatMessage[]
+  isSaving: boolean
   isThinking: boolean
   streamText?: string
 }
 
 export function ChatMessages({
   messages,
+  isSaving,
   isThinking,
   streamText,
 }: ChatMessagesProps) {
@@ -18,6 +20,7 @@ export function ChatMessages({
       {messages.map((message, i) => (
         <ChatMessageItem key={i} message={message} />
       ))}
+      {isSaving && <FlowingText text="질문 분석 중..." />}
       {isThinking ? (
         <ThinkingDot />
       ) : (
@@ -36,4 +39,8 @@ function ThinkingDot() {
   return (
     <span className="inline-block h-2 w-2 rounded-full bg-black m-4 thinking-dot" />
   )
+}
+
+function FlowingText({ text }: { text: string }) {
+  return <span className="text-sm flowing-text">{text}</span>
 }

@@ -149,3 +149,20 @@
 .thinking-dot {
   animation: dot-breathe 1s ease-in-out infinite;
 }
+
+@keyframes flowing-fade {
+  0% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+.flowing-text {
+  display: inline-block;
+  animation: flowing-fade 1.1s ease-in-out infinite;
+}
