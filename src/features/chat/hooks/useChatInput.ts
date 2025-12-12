@@ -76,9 +76,9 @@ export function useChatInput(conversationId?: string): {
     value,
     setValue,
     handleSubmit,
-    isThinking,
     isSending,
     isSaving,
+    isThinking,
     isStreaming,
   }
 }
