@@ -36,7 +36,9 @@ export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
         {/* 현재 페이지 / 전체 페이지 */}
         <div>
           {numPages ? (
-            <>Page {pageNumber} / {numPages}</>
+            <>
+              Page {pageNumber} / {numPages}
+            </>
           ) : (
             'Loading...'
           )}

@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 
-import { useChatInputController } from '@/contexts/useChatInputController'
 import { ChatMessages } from '@/features/chat/components/ChatMessages'
 import { ChatInputGroup } from '@/features/chat/components/ChatInputGroup'
 import { useMessagesQuery } from '../hooks/queries/useMessagesQuery'
+import { useChatInput } from '../hooks/useChatInput'
 
 type ChatDetailViewProps = {
   conversationId: string
@@ -19,7 +19,7 @@ export function ChatDetailView({ conversationId }: ChatDetailViewProps) {
     isSaving,
     isThinking,
     isSending,
-  } = useChatInputController()
+  } = useChatInput(conversationId)
 
   const isSubmitDisabled = isSending || !value.trim()
 

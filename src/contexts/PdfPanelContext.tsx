@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function PdfPanelProvider({ children, conversationId }: Props) {
-  const url = conversationId ? `/api/pdfs/${conversationId}` : null
+  const url = conversationId && `/api/pdfs/${conversationId}`
   const { mutate: upload, isPending } = useUploadPdfMutation()
 
   const value = useMemo(
@@ -18,7 +18,7 @@ export function PdfPanelProvider({ children, conversationId }: Props) {
       upload,
       isPending,
     }),
-    [url, upload, isPending],
+    [url, upload, isPending]
   )
 
   return (
