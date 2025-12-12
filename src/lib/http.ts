@@ -1,10 +1,18 @@
-export type SSEEventType = 'token' | 'result' | 'error' | 'message' | (string & {})
+export type SSEEventType =
+  | 'token'
+  | 'result'
+  | 'error'
+  | 'message'
+  | (string & {})
 export interface SSEEvent<T = unknown> {
   event: SSEEventType
   data: T
 }
-export interface StreamOptions<TToken = unknown, TResult = unknown, TError = unknown>
-  extends RequestInit {
+export interface StreamOptions<
+  TToken = unknown,
+  TResult = unknown,
+  TError = unknown,
+> extends RequestInit {
   onToken?: (data: TToken) => void
   onResult?: (data: TResult) => void
   onError?: (data: TError) => void
@@ -13,33 +21,26 @@ export interface StreamOptions<TToken = unknown, TResult = unknown, TError = unk
 
 async function fetchJson<T>(url: string, config: RequestInit = {}): Promise<T> {
   const response = await fetch(url, config)
-  
-  if (!response.ok)
-    throw new Error(await response.text())
+
+  if (!response.ok) throw new Error(await response.text())
   return response.json()
 }
 
 async function fetchStream<TToken, TResult, TError>(
-  url: string, 
+  url: string,
   options: StreamOptions<TToken, TResult, TError> = {}
 ): Promise<TResult | undefined> {
-  const {
-    onToken,
-    onResult,
-    onError,
-    onEvent,
-    ...fetchInit } = options
+  const { onToken, onResult, onError, onEvent, ...fetchInit } = options
 
   const response = await fetch(url, {
     ...fetchInit,
     headers: {
-      'Accept': 'text/event-stream',
+      Accept: 'text/event-stream',
       ...(fetchInit.headers || {}),
-    }
+    },
   })
 
-  if (!response.ok)
-    throw new Error(await response.text())
+  if (!response.ok) throw new Error(await response.text())
 
   if (!response.body) {
     throw new Error('ReadableStream not supported in this environment.')
@@ -75,12 +76,12 @@ async function fetchStream<TToken, TResult, TError>(
         }
       }
 
-       if (!dataLine) continue
+      if (!dataLine) continue
 
       let json: unknown
       try {
         json = JSON.parse(dataLine)
-      } catch (e) {
+      } catch {
         console.error('Failed to parse SSE JSON:', dataLine)
         continue
       }
@@ -104,21 +105,21 @@ async function fetchStream<TToken, TResult, TError>(
 interface HttpClient {
   <T>(path: string, config?: RequestInit): Promise<T>
   stream<TToken, TResult, TError>(
-    path: string, 
+    path: string,
     options?: StreamOptions<TToken, TResult, TError>
   ): Promise<TResult | undefined>
 }
 
 function createHttpClient(baseURL: string) {
-  const client = (async function http<T>(
-    path: string, 
+  const client = async function http<T>(
+    path: string,
     config: RequestInit = {}
   ) {
     return await fetchJson<T>(baseURL + path, config)
-  }) as HttpClient
+  } as HttpClient
 
   client.stream = async function stream<TToken, TResult, TError>(
-    path: string, 
+    path: string,
     options: StreamOptions<TToken, TResult, TError> = {}
   ) {
     return await fetchStream(baseURL + path, options)
