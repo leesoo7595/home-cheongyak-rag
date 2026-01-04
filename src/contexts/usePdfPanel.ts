@@ -4,6 +4,9 @@ interface PdfPanelState {
   url?: string
   upload: (file: File) => void
   isPending: boolean
+
+  page: number
+  onPageChange: (page: number) => void
 }
 
 export const PdfPanelContext = createContext<PdfPanelState | null>(null)

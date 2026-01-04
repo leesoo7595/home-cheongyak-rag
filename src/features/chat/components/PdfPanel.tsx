@@ -3,7 +3,7 @@ import { PdfEmptyUploadPanel } from './PdfUploadPanel'
 import { PdfViewerPanel } from './PdfViewerPanel'
 
 export function PdfPanel() {
-  const { url, upload, isPending } = usePdfPanel()
+  const { url, upload, isPending, page, onPageChange } = usePdfPanel()
 
   return (
     <div className="flex h-full flex-col border-l ">
@@ -14,7 +14,9 @@ export function PdfPanel() {
             isPending={isPending}
           />
         </div>
-      ) : <PdfViewerPanel url={url} />}
+      ) : (
+        <PdfViewerPanel url={url} page={page} onPageChange={onPageChange} />
+      )}
     </div>
   )
 }
