@@ -1,17 +1,22 @@
-import { useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
 import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
+import { useState } from 'react'
 
 // worker 설정 (Vite)
 pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
 
 interface PdfViewerPanelProps {
   url: string | null
+  page: number
+  onPageChange: (page: number) => void
 }
 
-export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
+export function PdfViewerPanel({
+  url,
+  page,
+  onPageChange,
+}: PdfViewerPanelProps) {
   const [numPages, setNumPages] = useState<number | null>(null)
-  const [pageNumber, setPageNumber] = useState(1)
 
   return (
     <div className="flex h-full w-full flex-col gap-2">
@@ -19,15 +24,15 @@ export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
         <div className="flex items-center gap-2">
           <button
             className="rounded border px-2 py-1 disabled:opacity-50"
-            onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
-            disabled={pageNumber <= 1}
+            onClick={() => onPageChange(Math.max(1, page - 1))}
+            disabled={page <= 1}
           >
             Prev
           </button>
           <button
             className="rounded border px-2 py-1 disabled:opacity-50"
-            onClick={() => setPageNumber((p) => Math.min(numPages ?? 1, p + 1))}
-            disabled={!numPages || pageNumber >= numPages}
+            onClick={() => onPageChange(Math.min(numPages ?? 1, page + 1))}
+            disabled={!numPages || page >= numPages}
           >
             Next
           </button>
@@ -37,7 +42,7 @@ export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
         <div>
           {numPages ? (
             <>
-              Page {pageNumber} / {numPages}
+              Page {page} / {numPages}
             </>
           ) : (
             'Loading...'
@@ -61,8 +66,8 @@ export function PdfViewerPanel({ url }: PdfViewerPanelProps) {
           >
             {numPages && (
               <Page
-                key={pageNumber} // 페이지 전환 시 Page만 바뀜
-                pageNumber={pageNumber}
+                key={page} // 페이지 전환 시 Page만 바뀜
+                pageNumber={page}
                 width={720}
                 renderTextLayer={false}
                 renderAnnotationLayer={false}

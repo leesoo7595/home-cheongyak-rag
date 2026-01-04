@@ -1,28 +1,37 @@
 import { anchorifyPageRefs } from '@/lib/utils'
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown, { defaultUrlTransform } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 export function MarkdownRenderer({
   content,
-  onPageLinkClick,
+  onPageChange,
 }: {
   content: string
-  onPageLinkClick?: (page: number) => void
+  onPageChange?: (page: number) => void
 }) {
   const md = anchorifyPageRefs(content)
+  console.log('MarkdownRenderer content:', md)
   return (
     <div className="prose prose-neutral dark:prose-invert max-w-none">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        urlTransform={(url) => {
+          if (url.startsWith('page:')) return url
+          return defaultUrlTransform(url)
+        }}
         components={{
           a: ({ href, children, ...props }) => {
             const m = href?.match(/^page:(\d+)$/)
-            if (m && onPageLinkClick) {
+            if (m && onPageChange) {
               const page = Number(m[1])
               return (
                 <button
                   type="button"
-                  onClick={() => onPageLinkClick(page)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    onPageChange(page)
+                  }}
                   className="inline-flex items-center rounded-md px-1 py-0.5 text-sm font-medium text-blue-600 hover:bg-blue-50 hover:underline"
                   title={`PDF ${page}페이지로 이동`}
                 >
