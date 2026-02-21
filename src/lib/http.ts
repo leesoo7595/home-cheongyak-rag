@@ -28,7 +28,7 @@ async function fetchJson<T>(url: string, config: RequestInit = {}): Promise<T> {
 
 async function fetchStream<TToken, TResult, TError>(
   url: string,
-  options: StreamOptions<TToken, TResult, TError> = {}
+  options: StreamOptions<TToken, TResult, TError> = {},
 ): Promise<TResult | undefined> {
   const { onToken, onResult, onError, onEvent, ...fetchInit } = options
 
@@ -106,21 +106,21 @@ interface HttpClient {
   <T>(path: string, config?: RequestInit): Promise<T>
   stream<TToken, TResult, TError>(
     path: string,
-    options?: StreamOptions<TToken, TResult, TError>
+    options?: StreamOptions<TToken, TResult, TError>,
   ): Promise<TResult | undefined>
 }
 
 function createHttpClient(baseURL: string) {
   const client = async function http<T>(
     path: string,
-    config: RequestInit = {}
+    config: RequestInit = {},
   ) {
     return await fetchJson<T>(baseURL + path, config)
   } as HttpClient
 
   client.stream = async function stream<TToken, TResult, TError>(
     path: string,
-    options: StreamOptions<TToken, TResult, TError> = {}
+    options: StreamOptions<TToken, TResult, TError> = {},
   ) {
     return await fetchStream(baseURL + path, options)
   }
@@ -128,4 +128,8 @@ function createHttpClient(baseURL: string) {
   return client
 }
 
-export const api = createHttpClient('http://localhost:5173/api')
+const baseURL = import.meta.env.VITE_API_BASE_URL
+  ? `${import.meta.env.VITE_API_BASE_URL}/api`
+  : '/api'
+
+export const api = createHttpClient(baseURL)
