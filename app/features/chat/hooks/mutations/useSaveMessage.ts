@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { saveMessage } from '@/api/api'
+import { saveMessage } from '@/features/chat/api'
 import type {
   MessageRequest,
   SaveMessageResponse,
-} from '@/api/api.types'
+} from '@/features/chat/api.types'
 
 export function useSaveMessageMutation() {
   const queryClient = useQueryClient()

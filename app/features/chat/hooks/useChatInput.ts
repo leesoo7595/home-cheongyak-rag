@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react'
 
 import { useSaveMessageMutation } from './mutations/useSaveMessage'
 import { useChatStreamMutation } from './mutations/useChatStreamMutation'
-import type { ChatCompletionsRole } from '@/api/chat-completions.types'
+import type { ChatCompletionsRole } from '@/features/chat/chat-completions.types'
 import { useMessagesQuery } from './queries/useMessagesQuery'
 
 export type ChatInputController = ReturnType<typeof useChatInput>

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 
-import { uploadPdf } from '@/api/api'
+import { uploadPdf } from '@/features/chat/api'
 
 export function useUploadPdfMutation() {
   const queryClient = useQueryClient()

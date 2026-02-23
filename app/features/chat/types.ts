@@ -1,4 +1,4 @@
-import type { ChatCompletionsRole } from '@/api/chat-completions.types'
+import type { ChatCompletionsRole } from '@/features/chat/chat-completions.types'
 
 export type ChatRole = ChatCompletionsRole
 
