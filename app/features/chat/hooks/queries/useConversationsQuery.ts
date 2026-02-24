@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 
-import { fetchConversations } from "@/api/api"
-import type { Conversation } from "@/api/api.types"
+import { fetchConversations } from '@/features/chat/api'
+import type { Conversation } from '@/features/chat/api.types'
 
 export function useConversationsQuery() {
   return useQuery<Conversation[]>({
