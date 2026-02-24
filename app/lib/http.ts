@@ -128,8 +128,6 @@ function createHttpClient(baseURL: string) {
   return client
 }
 
-const baseURL = import.meta.env.VITE_API_BASE_URL
-  ? `${import.meta.env.VITE_API_BASE_URL}/api`
-  : '/api'
+const baseURL = '/api'
 
 export const api = createHttpClient(baseURL)
