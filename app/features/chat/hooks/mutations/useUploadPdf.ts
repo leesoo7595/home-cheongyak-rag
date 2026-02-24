@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { useRouter } from 'next/navigation'
 
 import { uploadPdf } from '@/features/chat/api'
 
 export function useUploadPdfMutation() {
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
+  const router = useRouter()
 
   return useMutation({
     mutationFn: uploadPdf,
@@ -13,10 +13,7 @@ export function useUploadPdfMutation() {
       queryClient.invalidateQueries({ queryKey: ['pdf'] })
       queryClient.invalidateQueries({ queryKey: ['conversations'] })
 
-      navigate({
-        to: '/f/$conversationId',
-        params: { conversationId },
-      })
+      router.push(`/f/${conversationId}`)
     },
     onError: (error) => {
       console.log(error)

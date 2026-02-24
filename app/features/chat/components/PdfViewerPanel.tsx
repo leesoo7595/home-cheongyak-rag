@@ -1,9 +1,7 @@
 import { Document, Page, pdfjs } from 'react-pdf'
-import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url'
 import { useState } from 'react'
 
-// worker 설정 (Vite)
-pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
+pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
 
 interface PdfViewerPanelProps {
   url: string | null

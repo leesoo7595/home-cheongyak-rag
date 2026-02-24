@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import Link from 'next/link'
 import { FilePlus } from 'lucide-react'
 
 import {
@@ -25,7 +25,7 @@ export function ChatSidebar() {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link to={'/'}>
+                <Link href="/">
                   <FilePlus /> <span>새 채팅</span>
                 </Link>
               </SidebarMenuButton>
@@ -37,7 +37,7 @@ export function ChatSidebar() {
               {conversations?.map((conversation) => (
                 <SidebarMenuItem key={conversation.id}>
                   <SidebarMenuButton asChild>
-                    <Link to={`/f/${conversation.id}`}>
+                    <Link href={`/f/${conversation.id}`}>
                       <span>{conversation.title}</span>
                     </Link>
                   </SidebarMenuButton>
