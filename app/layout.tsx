@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Providers } from './providers'
 import { AppLayout } from '@/components/layout/AppLayout'
 import { ChatSidebar } from '@/features/chat/components/ChatSidebar'
+import { SidebarInset } from '@/components/ui/sidebar'
 import './globals.css'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -9,10 +10,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="ko">
       <body>
         <Providers>
-          <div className="flex h-svh">
-            <ChatSidebar />
+          <ChatSidebar />
+          <SidebarInset>
             <AppLayout>{children}</AppLayout>
-          </div>
+          </SidebarInset>
         </Providers>
       </body>
     </html>
