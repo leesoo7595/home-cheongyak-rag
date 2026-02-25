@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect, useRef } from 'react'
 
 import { ChatMessages } from '@/features/chat/components/ChatMessages'

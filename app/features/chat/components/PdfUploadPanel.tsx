@@ -1,3 +1,5 @@
+'use client'
+
 import { FileText } from 'lucide-react'
 import { useRef, useState, type ChangeEvent } from 'react'
 

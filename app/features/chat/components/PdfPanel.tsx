@@ -1,6 +1,13 @@
+'use client'
+
+import dynamic from 'next/dynamic'
 import { usePdfPanel } from '@/contexts/usePdfPanel'
 import { PdfEmptyUploadPanel } from './PdfUploadPanel'
-import { PdfViewerPanel } from './PdfViewerPanel'
+
+const PdfViewerPanel = dynamic(
+  () => import('./PdfViewerPanel').then((m) => ({ default: m.PdfViewerPanel })),
+  { ssr: false },
+)
 
 export function PdfPanel() {
   const { url, upload, isPending, page, onPageChange } = usePdfPanel()

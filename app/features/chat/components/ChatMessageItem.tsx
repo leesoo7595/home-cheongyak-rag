@@ -1,5 +1,7 @@
+'use client'
+
 import { MarkdownRenderer } from '@/components/common/MarkdownRenderer'
-import { cn } from '../../../lib/utils'
+import { cn } from '@/lib/utils'
 import type { ChatMessage } from '../types'
 import { usePdfPanel } from '@/contexts/usePdfPanel'
 

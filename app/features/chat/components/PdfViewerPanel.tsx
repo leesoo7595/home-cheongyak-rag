@@ -1,3 +1,5 @@
+'use client'
+
 import { Document, Page, pdfjs } from 'react-pdf'
 import { useState } from 'react'
 

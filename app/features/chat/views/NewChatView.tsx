@@ -1,3 +1,5 @@
+'use client'
+
 import { ChatInputGroup } from '../components/ChatInputGroup'
 import { useChatInput } from '../hooks/useChatInput'
 import { usePdfPanel } from '@/contexts/usePdfPanel'

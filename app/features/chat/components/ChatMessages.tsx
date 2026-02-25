@@ -1,6 +1,7 @@
+'use client'
+
 import { ChatMessageItem } from './ChatMessageItem'
 import type { ChatMessage } from '../types'
-import '@/index.css'
 
 interface ChatMessagesProps {
   messages: ChatMessage[]

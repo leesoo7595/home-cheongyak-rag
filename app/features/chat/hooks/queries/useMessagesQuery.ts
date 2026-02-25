@@ -1,3 +1,5 @@
+'use client'
+
 import { fetchMessages } from '@/features/chat/api'
 import type { MessageResponse } from '@/features/chat/api.types'
 import { useQuery } from '@tanstack/react-query'
