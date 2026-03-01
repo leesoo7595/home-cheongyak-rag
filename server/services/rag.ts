@@ -24,6 +24,7 @@ const INDEX_NAME = process.env.OPENSEARCH_INDEX!
 // ---------- Embeddings ----------
 
 const embeddings = new OpenAIEmbeddings({
+  apiKey: process.env.EMBEDDING_API_KEY ?? 'dummy',
   model: '/data/models/baai_bge-m3',
   configuration: {
     baseURL: process.env.EMBEDDING_API_URL,
@@ -40,7 +41,10 @@ export type SearchHit = {
 
 // ---------- Indexing ----------
 
-export async function indexPdf(conversationId: string, pdfBuffer: Buffer): Promise<void> {
+export async function indexPdf(
+  conversationId: string,
+  pdfBuffer: Buffer,
+): Promise<void> {
   const tmpPath = path.join(os.tmpdir(), `${randomUUID()}.pdf`)
   fs.writeFileSync(tmpPath, pdfBuffer)
 
@@ -64,7 +68,9 @@ export async function indexPdf(conversationId: string, pdfBuffer: Buffer): Promi
 
     // 4) Index to OpenSearch
     for (let i = 0; i < chunks.length; i++) {
-      const pageNumber = (chunks[i].metadata as { loc?: { pageNumber?: number } }).loc?.pageNumber ?? 1
+      const pageNumber =
+        (chunks[i].metadata as { loc?: { pageNumber?: number } }).loc
+          ?.pageNumber ?? 1
       await opensearchClient.index({
         index: INDEX_NAME,
         id: `${conversationId}-${i}`,

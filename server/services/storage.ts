@@ -13,8 +13,6 @@ export function getMessagesPath(conversationId: string): string {
   return path.join(CONVERSATIONS_DIR, `${conversationId}.jsonl`)
 }
 
-// ---------- JSONL Helpers ----------
-
 type JsonObject = Record<string, unknown>
 
 function* iterJsonl(filePath: string): Generator<JsonObject> {
@@ -31,8 +29,6 @@ function appendJsonl(filePath: string, obj: JsonObject): void {
   fs.appendFileSync(filePath, JSON.stringify(obj) + '\n', 'utf-8')
 }
 
-// ---------- Conversations ----------
-
 export type Conversation = {
   id: string
   title: string
@@ -40,19 +36,29 @@ export type Conversation = {
   updatedAt: string
 }
 
+function normalizeConversation(row: JsonObject): Conversation {
+  return {
+    id: row.id as string,
+    title: row.title as string,
+    createdAt: (row.createdAt ?? row.created_at) as string,
+    updatedAt: (row.updatedAt ?? row.updated_at) as string,
+  }
+}
+
 export function loadConversations(): Map<string, Conversation> {
   const convos = new Map<string, Conversation>()
   for (const row of iterJsonl(CONVERSATIONS_PATH)) {
-    const c = row as unknown as Conversation
+    const c = normalizeConversation(row)
     convos.set(c.id, c)
   }
   return convos
 }
 
 function saveConversations(convos: Map<string, Conversation>): void {
-  const lines = Array.from(convos.values())
-    .map((c) => JSON.stringify(c))
-    .join('\n') + '\n'
+  const lines =
+    Array.from(convos.values())
+      .map((c) => JSON.stringify(c))
+      .join('\n') + '\n'
   fs.writeFileSync(CONVERSATIONS_PATH, lines, 'utf-8')
 }
 
