@@ -7,29 +7,63 @@ import { OpenAIEmbeddings } from '@langchain/openai'
 import { PDFLoader } from '@langchain/community/document_loaders/fs/pdf'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 
-// ---------- OpenSearch client ----------
+type RagConfig = {
+  indexName: string
+  opensearchHost: string
+  opensearchPort: string
+  opensearchUser: string
+  opensearchPassword: string
+}
 
-const opensearchClient = new Client({
-  node: `https://${process.env.OPENSEARCH_HOST}:${process.env.OPENSEARCH_PORT}`,
-  auth: {
-    username: process.env.OPENSEARCH_USER!,
-    password: process.env.OPENSEARCH_PASSWD!,
-  },
-  ssl: { rejectUnauthorized: false },
-  requestTimeout: 300_000,
-})
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+  return value
+}
 
-const INDEX_NAME = process.env.OPENSEARCH_INDEX!
+function getRagConfig(): RagConfig {
+  return {
+    indexName: requireEnv('OPENSEARCH_INDEX'),
+    opensearchHost: requireEnv('OPENSEARCH_HOST'),
+    opensearchPort: requireEnv('OPENSEARCH_PORT'),
+    opensearchUser: requireEnv('OPENSEARCH_USER'),
+    opensearchPassword: requireEnv('OPENSEARCH_PASSWD'),
+  }
+}
 
-// ---------- Embeddings ----------
+let opensearchClient: Client | null = null
+function getOpenSearchClient(config: RagConfig): Client {
+  if (!opensearchClient) {
+    opensearchClient = new Client({
+      node: `https://${config.opensearchHost}:${config.opensearchPort}`,
+      auth: {
+        username: config.opensearchUser,
+        password: config.opensearchPassword,
+      },
+      ssl: { rejectUnauthorized: false },
+      requestTimeout: 300_000,
+    })
+  }
 
-const embeddings = new OpenAIEmbeddings({
-  apiKey: process.env.EMBEDDING_API_KEY ?? 'dummy',
-  model: '/data/models/baai_bge-m3',
-  configuration: {
-    baseURL: process.env.EMBEDDING_API_URL,
-  },
-})
+  return opensearchClient
+}
+
+let embeddings: OpenAIEmbeddings | null = null
+function getEmbeddings(): OpenAIEmbeddings {
+  if (!embeddings) {
+    embeddings = new OpenAIEmbeddings({
+      apiKey: process.env.EMBEDDING_API_KEY ?? 'dummy',
+      model: '/data/models/baai_bge-m3',
+      configuration: {
+        baseURL: process.env.EMBEDDING_API_URL,
+      },
+    })
+  }
+
+  return embeddings
+}
 
 // ---------- Types ----------
 
@@ -45,6 +79,10 @@ export async function indexPdf(
   conversationId: string,
   pdfBuffer: Buffer,
 ): Promise<void> {
+  const config = getRagConfig()
+  const client = getOpenSearchClient(config)
+  const embeddingClient = getEmbeddings()
+
   const tmpPath = path.join(os.tmpdir(), `${randomUUID()}.pdf`)
   fs.writeFileSync(tmpPath, pdfBuffer)
 
@@ -64,15 +102,15 @@ export async function indexPdf(
 
     // 3) Embed all chunks
     const texts = chunks.map((c) => c.pageContent)
-    const vectors = await embeddings.embedDocuments(texts)
+    const vectors = await embeddingClient.embedDocuments(texts)
 
     // 4) Index to OpenSearch
     for (let i = 0; i < chunks.length; i++) {
       const pageNumber =
         (chunks[i].metadata as { loc?: { pageNumber?: number } }).loc
           ?.pageNumber ?? 1
-      await opensearchClient.index({
-        index: INDEX_NAME,
+      await client.index({
+        index: config.indexName,
         id: `${conversationId}-${i}`,
         body: {
           pdf_id: conversationId,
@@ -96,10 +134,13 @@ export async function searchSimilarChunks(
   size = 10,
   k = 20,
 ): Promise<SearchHit[]> {
-  const [queryVec] = await embeddings.embedDocuments([query])
+  const config = getRagConfig()
+  const client = getOpenSearchClient(config)
+  const embeddingClient = getEmbeddings()
+  const [queryVec] = await embeddingClient.embedDocuments([query])
 
-  const result = await opensearchClient.search({
-    index: INDEX_NAME,
+  const result = await client.search({
+    index: config.indexName,
     body: {
       size,
       query: {
