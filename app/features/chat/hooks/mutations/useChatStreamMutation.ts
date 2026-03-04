@@ -23,6 +23,14 @@ export function useChatStreamMutation() {
 
   const mutation = useMutation({
     mutationFn: async ({ messages, conversationId }: ChatStreamParams) => {
+      let isStreamClosed = false
+
+      const closeStream = () => {
+        isStreamClosed = true
+        setStreamText('')
+        setStreamStatus('idle')
+      }
+
       setStreamText('')
       setStreamStatus('thinking')
 
@@ -32,16 +40,19 @@ export function useChatStreamMutation() {
             messages,
           },
           onToken: (e) => {
+            if (isStreamClosed) return
+
             const chunk = e.message.content ?? ''
             if (chunk) {
               setStreamStatus((prev) =>
-                prev === 'thinking' ? 'streaming' : prev
+                prev === 'thinking' ? 'streaming' : prev,
               )
 
               setStreamText((prev) => prev + chunk)
             }
           },
           onResult: (e) => {
+            closeStream()
             saveLocalMessageMutate.mutate({
               ...e.message,
               conversationId,
@@ -49,13 +60,13 @@ export function useChatStreamMutation() {
           },
           onError: (e) => {
             console.error('stream error', e)
-            setStreamStatus('idle')
+            closeStream()
           },
         })
 
         return finalResult
       } finally {
-        setStreamStatus('idle')
+        closeStream()
       }
     },
   })

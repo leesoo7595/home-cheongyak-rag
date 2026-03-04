@@ -24,14 +24,14 @@ export function ChatMessages({
       {isSaving && <FlowingText text="질문 분석 중..." />}
       {isThinking ? (
         <ThinkingDot />
-      ) : (
+      ) : streamText ? (
         <ChatMessageItem
           message={{
             role: 'assistant',
-            content: streamText ?? '',
+            content: streamText,
           }}
         />
-      )}
+      ) : null}
     </div>
   )
 }
