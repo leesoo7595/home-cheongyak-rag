@@ -6,14 +6,13 @@
 
 주택청약공고 PDF를 업로드하면 페이지 단위로 텍스트를 추출하고, 이를 청킹·임베딩하여 OpenSearch 에 저장한 뒤 사용자가 질문하면 관련 청크를 벡터 검색하여 답변을 생성하는 **RAG 기반 Q&A 서비스**입니다.
 
-React(Vite), FastAPI, OpenSearch, bge-m3 임베딩 모델 기반으로 구현되었습니다.
+Next.js(Route Handler), OpenSearch, bge-m3 임베딩 모델 기반으로 구현되었습니다.
 
 ## 🧪 Development Setup
 
 ### 테스트 환경 정보
 
 - MAC M1 Max(10코어 CPU 및 32코어 GPU) 메모리 64GB
-- python 3.9.6
 - node 24.11.1
 - OpenSearch 2.18
 
@@ -61,39 +60,17 @@ PUT home-cheongyak-rag-v3
 }
 ```
 
-### Server
+### App (Next.js)
 
 ```bash
-# venv 생성 및 활성화
-$ python3 -m venv .venv
-$ . .venv/bin/activate
-
-# venv 환경 진입됨
-$(.venv)
-```
-
-```bash
-# .venv/bin/activate
-
-# exports 설정
 export OPENSEARCH_HOST=<OPENSEARCH_HOST>
 export OPENSEARCH_USER=<OPENSEARCH_USER>
 export OPENSEARCH_PASSWD=<OPENSEARCH_PASSWD>
 export OPENSEARCH_PORT=<OPENSEARCH_PORT>
 export OPENSEARCH_INDEX=<OPENSEARCH_INDEX>
+export EMBEDDING_API_URL=<EMBEDDING_API_URL>
+export EMBEDDING_API_KEY=<EMBEDDING_API_KEY>
 export CLOVA_API_TOKEN=<CLOVA_API_TOKEN starting with 'nv-...'>
-```
-
-```bash
-pip install -r requirements.txt
-
-# 서버 실행
-uvicorn server.app.main:app --reload --port 4000
-```
-
-### Frontend
-
-```bash
 npm install
 npm run dev
 ```
