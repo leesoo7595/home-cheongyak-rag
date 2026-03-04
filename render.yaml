@@ -1,12 +1,10 @@
 services:
   - type: web
     name: rag-toy-api
-    runtime: python
-    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
-    startCommand: uvicorn server.app.main:app --host 0.0.0.0 --port $PORT
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start -- -p $PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.11
       - key: OPENSEARCH_HOST
         sync: false
       - key: OPENSEARCH_USER
