@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function PdfPanelProvider({ children, conversationId }: Props) {
-  const url = conversationId && `/api/pdfs/${conversationId}`
+  const url = conversationId && `/api/conversations/${conversationId}/pdf`
   const { mutate: upload, isPending } = useUploadPdfMutation()
   const [page, setPage] = useState(1)
 
